@@ -1,0 +1,19 @@
+{
+  "id": "AC4-missing-required-field-named",
+  "given": "the operator is filing a stock record",
+  "when": "they submit with a required field (SKU, location, tracking code, or quantity) missing",
+  "then": "a clear message naming the missing field is shown and no record is created or changed",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "Rejection path for absent required input; AC1-AC3 cover only accepted submissions."
+  },
+  "layer": "E2E",
+  "architectural_notes": "Server-decided rejection rendered inline: the boundary/service validation returns the 422 field-named errors envelope and the client maps each error to field-error-<name>; no row is written (R7). Verified by Playwright against the live API plus a table-unchanged check.",
+  "ui_seams": [
+    "file-stock-form",
+    "field-error-<name>",
+    "alert-error"
+  ],
+  "api_contract_id": "EP1-file-stock-record"
+}

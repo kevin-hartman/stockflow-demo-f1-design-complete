@@ -1,0 +1,121 @@
+{
+  "feature_id": "F1-stock-visibility",
+  "story_id": "S3-view-stock-list-and-sku-detail",
+  "ordered_for": "design-momentum",
+  "items": [
+    {
+      "id": "T56",
+      "description": "GET /api/stock-records responds with Content-Type application/json, never text/html, both when rows exist and when the table is empty",
+      "ac_id": "AC1-home-list-shows-every-record",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T57",
+      "description": "The integration test session fixture refuses to run unless DATABASE_URL is a postgresql URL, so the S3 list and SKU-detail reads never run against sqlite or an in-memory engine",
+      "ac_id": "AC1-home-list-shows-every-record",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR4-real-branch-tests"
+    },
+    {
+      "id": "T58",
+      "description": "StockTable rendered against the real EP3 API shows one stock-row-<sku>-<location> row per record with stock-cell-sku, stock-cell-location, stock-cell-tracking-code and stock-cell-quantity text, in the stock-table design-guide class",
+      "ac_id": "AC1-home-list-shows-every-record",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/StockTable.test.tsx"
+    },
+    {
+      "id": "T59",
+      "description": "StockTable rendered against the real EP3 API with one uuid-suffixed SKU filed at two locations shows that SKU in two separate rows, one per location",
+      "ac_id": "AC1-home-list-shows-every-record",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/StockTable.test.tsx"
+    },
+    {
+      "id": "T60",
+      "description": "Playwright e2e against the deployed app and live DB: files a crypto.randomUUID()-suffixed SKU at two locations via /stock/new, navigates to route / and sees one stock-row-<sku>-<location> per (sku, location) under stock-table, each with stock-cell-sku, stock-cell-location, stock-cell-tracking-code and stock-cell-quantity values",
+      "ac_id": "AC1-home-list-shows-every-record",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/stock-list.spec.ts"
+    },
+    {
+      "id": "T61",
+      "description": "GET /api/skus/{sku}/stock-records responds with Content-Type application/json, never text/html, both for a SKU with records and for an unknown SKU",
+      "ac_id": "AC2-sku-detail-shows-all-its-locations",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T62",
+      "description": "SkuDetail rendered for a uuid-suffixed SKU against the real EP4 API shows sku-detail-title and one sku-location-row-<location> per location with quantity and tracking code, and no rows for a distractor SKU",
+      "ac_id": "AC2-sku-detail-shows-all-its-locations",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/SkuDetail.test.tsx"
+    },
+    {
+      "id": "T63",
+      "description": "Playwright e2e against the live DB: with a unique SKU filed at several locations plus a distractor SKU, clicking stock-link-<sku> on route / lands on /skus/:sku where sku-detail-title shows the SKU and sku-locations lists a sku-location-row-<location> with sku-location-quantity and sku-location-tracking-code for every location of that SKU only",
+      "ac_id": "AC2-sku-detail-shows-all-its-locations",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/sku-detail.spec.ts"
+    },
+    {
+      "id": "T64",
+      "description": "StockTable row for a record with NULL par_level, batch and serial renders the text 'not tracked' (not-tracked muted seam) in stock-cell-par-level, stock-cell-batch and stock-cell-serial, never blank (NFR11 clause 1)",
+      "ac_id": "AC3-list-and-detail-show-not-tracked",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/StockTable.test.tsx",
+      "nfr_id": "NFR11-list-detail-not-tracked-render"
+    },
+    {
+      "id": "T65",
+      "description": "SkuDetail sku-locations row for a record with NULL par_level, batch and serial renders 'not tracked' in sku-location-par-level, sku-location-batch and sku-location-serial, never blank (NFR11 clause 2)",
+      "ac_id": "AC3-list-and-detail-show-not-tracked",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/SkuDetail.test.tsx",
+      "nfr_id": "NFR11-list-detail-not-tracked-render"
+    },
+    {
+      "id": "T66",
+      "description": "Playwright e2e against the live DB: a unique SKU filed with par level, batch and serial blank shows the not-tracked text in stock-cell-par-level, stock-cell-batch and stock-cell-serial of its stock-row on route /, never blank",
+      "ac_id": "AC3-list-and-detail-show-not-tracked",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/not-tracked-list.spec.ts"
+    },
+    {
+      "id": "T67",
+      "description": "Playwright e2e against the live DB: opening /skus/:sku for a unique SKU filed with par level, batch and serial blank shows the not-tracked text in sku-location-par-level, sku-location-batch and sku-location-serial, never blank or a crash",
+      "ac_id": "AC3-list-and-detail-show-not-tracked",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/not-tracked-detail.spec.ts"
+    },
+    {
+      "id": "T68",
+      "description": "Stock list rendered against a real EP3 API returning [] shows the stock-empty empty-state ('No stock recorded yet') with a File stock link to /stock/new instead of a blank table or error",
+      "ac_id": "AC4-empty-list-shows-empty-state",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/StockList.test.tsx"
+    },
+    {
+      "id": "T69",
+      "description": "Playwright e2e: drive the empty state by mocking the EP3 response with page.route matched on the API PATHNAME (new URL(url).pathname === '/api/stock-records', never a '**' glob) fulfilling with [] — no table deletion/DELETE teardown, the shared stock_records table is untouched; navigating to route / shows the stock-empty empty-state (empty-state class, 'No stock recorded yet' heading, File stock CTA to /stock/new) instead of a blank stock-table or an error",
+      "ac_id": "AC4-empty-list-shows-empty-state",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/stock-empty.spec.ts"
+    }
+  ]
+}

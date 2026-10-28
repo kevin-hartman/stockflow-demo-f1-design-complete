@@ -1,0 +1,42 @@
+[
+ {
+  "id": "cli-1",
+  "description": "Playwright e2e (client/tests/e2e/lookup-by-tracking-code.spec.ts) against the deployed app and live DB: file a record with a randomUUID-suffixed tracking code at /stock/new, navigate to route /, type the code into lookup-input and click lookup-submit, and lookup-result shows its SKU, location, tracking code and quantity in lookup-result-sku/-location/-tracking-code/-quantity",
+  "ac_id": "AC1-lookup-shows-matching-record",
+  "status": "pending",
+  "kind": "client",
+  "scenario_file": "client/tests/e2e/lookup-by-tracking-code.spec.ts"
+ },
+ {
+  "id": "cli-2",
+  "description": "Playwright e2e (client/tests/e2e/lookup-deep-link.spec.ts): opening route /?code=<randomUUID-suffixed filed code> in the real app prefills lookup-input and shows the matching lookup-result without a full page reload",
+  "ac_id": "AC1-lookup-shows-matching-record",
+  "status": "pending",
+  "kind": "client",
+  "scenario_file": "client/tests/e2e/lookup-deep-link.spec.ts"
+ },
+ {
+  "id": "cli-3",
+  "description": "Playwright e2e (client/tests/e2e/lookup-latency.spec.ts) against live API: after filing a record with a randomUUID-suffixed code, pressing Enter in lookup-input at route / makes lookup-result visible within about 200ms of the scan",
+  "ac_id": "AC2-scan-to-screen-under-200ms",
+  "status": "pending",
+  "kind": "client",
+  "scenario_file": "client/tests/e2e/lookup-latency.spec.ts"
+ },
+ {
+  "id": "cli-4",
+  "description": "Playwright e2e (client/tests/e2e/lookup-not-found.spec.ts) against live DB: submitting a never-filed randomUUID-suffixed code U in lookup-input at route / shows lookup-not-found reading 'No record found for U' with no error page",
+  "ac_id": "AC3-unknown-code-shows-not-found",
+  "status": "pending",
+  "kind": "client",
+  "scenario_file": "client/tests/e2e/lookup-not-found.spec.ts"
+ },
+ {
+  "id": "cli-5",
+  "description": "Playwright e2e (client/tests/e2e/lookup-not-tracked.spec.ts) against live DB: file a record via /stock/new with par level, batch and serial blank under a randomUUID-suffixed code, look it up at route /, and lookup-result-par-level, lookup-result-batch and lookup-result-serial each show 'not tracked'",
+  "ac_id": "AC4-found-record-shows-not-tracked",
+  "status": "pending",
+  "kind": "client",
+  "scenario_file": "client/tests/e2e/lookup-not-tracked.spec.ts"
+ }
+]

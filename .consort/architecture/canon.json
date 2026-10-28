@@ -1,0 +1,31 @@
+{
+  "established_by": "F1-stock-visibility",
+  "established_at": "2026-10-28T06:38:11.346Z",
+  "ac_layers": [
+    "E2E",
+    "API"
+  ],
+  "nfr_posture": [],
+  "invariant_patterns": [
+    {
+      "type": "unique",
+      "brief": "A UNIQUE constraint on (sku, location) rejects a second row for the same pair at the DB, so two stored duplicates can never exist (R3)."
+    },
+    {
+      "type": "not_null",
+      "brief": "sku is NOT NULL: inserting a row with a null sku is rejected by the DB."
+    },
+    {
+      "type": "check",
+      "brief": "CHECK (quantity >= 0) rejects a negative quantity at the DB, so a stored negative stock level is impossible (R2)."
+    },
+    {
+      "type": "transactional",
+      "brief": "Filing is a single INSERT ... ON CONFLICT (sku, location) DO UPDATE in one transaction: a re-file updates the one existing row in place, and a rejected write leaves the table unchanged."
+    },
+    {
+      "type": "migration_reversible",
+      "brief": "Initial create_table: after downgrade to the migration's down_revision then upgrade head, stock_records and its columns, unique and check constraints are present again (schema recreated; no data-survival claim for the initial creation)."
+    }
+  ]
+}

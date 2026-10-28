@@ -1,0 +1,20 @@
+{
+  "id": "AC1-file-stock-form",
+  "given": "the operator is on the file-stock screen in the single warehouse",
+  "when": "they submit a SKU, location, tracking code, and quantity",
+  "then": "a confirmation is shown on screen and a stock record for that (sku, location) exists with the submitted tracking code and quantity",
+  "status": "draft",
+  "layer": "E2E",
+  "architectural_notes": "Client↔server round-trip: FileStockPage (/stock/new) posts via client/src/api + hooks to the app/routes boundary, which delegates to app/services/stock_records.py and the repository upsert; the confirmation renders the server's outcome. Verified by Playwright against the live API on the paired branch, then the stock_records row is asserted.",
+  "ui_seams": [
+    "file-stock-form",
+    "field-sku",
+    "field-location",
+    "field-tracking-code",
+    "field-quantity",
+    "file-stock-submit",
+    "file-stock-confirmation",
+    "toast-success"
+  ],
+  "api_contract_id": "EP1-file-stock-record"
+}

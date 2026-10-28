@@ -1,0 +1,238 @@
+{
+ "feature_id": "F1-stock-visibility",
+ "tables": [
+  {
+   "name": "stock_records",
+   "columns": [
+    {
+     "name": "id",
+     "type": "bigint generated always as identity",
+     "nullable": false,
+     "description": "surrogate key"
+    },
+    {
+     "name": "sku",
+     "type": "text",
+     "nullable": false
+    },
+    {
+     "name": "location",
+     "type": "text",
+     "nullable": false
+    },
+    {
+     "name": "tracking_code",
+     "type": "text",
+     "nullable": false
+    },
+    {
+     "name": "quantity",
+     "type": "integer",
+     "nullable": false
+    },
+    {
+     "name": "par_level",
+     "type": "integer",
+     "nullable": true,
+     "description": "NULL = not tracked"
+    },
+    {
+     "name": "batch",
+     "type": "text",
+     "nullable": true
+    },
+    {
+     "name": "serial",
+     "type": "text",
+     "nullable": true
+    },
+    {
+     "name": "created_at",
+     "type": "timestamptz",
+     "nullable": false,
+     "default": "now()"
+    },
+    {
+     "name": "updated_at",
+     "type": "timestamptz",
+     "nullable": false,
+     "default": "now()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique_constraints": [
+    [
+     "sku",
+     "location"
+    ]
+   ],
+   "checks": [
+    {
+     "name": "ck_stock_records_quantity_non_negative",
+     "expression": "quantity >= 0"
+    },
+    {
+     "name": "ck_stock_records_par_level_non_negative",
+     "expression": "par_level IS NULL OR par_level >= 0"
+    },
+    {
+     "name": "ck_stock_records_optional_text_not_blank",
+     "expression": "(batch IS NULL OR batch <> '') AND (serial IS NULL OR serial <> '')"
+    }
+   ],
+   "indexes": [
+    {
+     "name": "ix_stock_records_tracking_code_updated_at",
+     "columns": [
+      "tracking_code",
+      "updated_at"
+     ],
+     "unique": false
+    }
+   ]
+  },
+  {
+   "name": "stock_adjustments",
+   "columns": [
+    {
+     "name": "id",
+     "type": "bigint generated always as identity",
+     "nullable": false
+    },
+    {
+     "name": "stock_record_id",
+     "type": "bigint",
+     "nullable": false
+    },
+    {
+     "name": "actor",
+     "type": "text",
+     "nullable": false
+    },
+    {
+     "name": "quantity_before",
+     "type": "integer",
+     "nullable": false
+    },
+    {
+     "name": "quantity_after",
+     "type": "integer",
+     "nullable": false
+    },
+    {
+     "name": "created_at",
+     "type": "timestamptz",
+     "nullable": false,
+     "default": "now()",
+     "description": "DB-assigned; append-only (BEFORE UPDATE trigger trg_stock_adjustments_no_update)"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "foreign_keys": [
+    {
+     "columns": [
+      "stock_record_id"
+     ],
+     "references_table": "stock_records",
+     "references_columns": [
+      "id"
+     ],
+     "on_delete": "restrict"
+    }
+   ],
+   "checks": [
+    {
+     "name": "ck_stock_adjustments_actor_not_blank",
+     "expression": "btrim(actor) <> ''"
+    },
+    {
+     "name": "ck_stock_adjustments_quantities_non_negative",
+     "expression": "quantity_before >= 0 AND quantity_after >= 0"
+    }
+   ],
+   "indexes": [
+    {
+     "name": "ix_stock_adjustments_record_created_at",
+     "columns": [
+      "stock_record_id",
+      "created_at",
+      "id"
+     ],
+     "unique": false
+    }
+   ]
+  }
+ ],
+ "schema_changes": [
+  {
+   "id": "SC1-create-stock-records",
+   "story_id": "S1-file-stock-record",
+   "kind": "create_table",
+   "table": "stock_records",
+   "detail": "Create stock_records with NOT NULL sku/location/tracking_code/quantity, UNIQUE (sku, location) as uq_stock_records_sku_location, and the three CHECK constraints.",
+   "migration_note": "Downgrade drops the table; upgrade recreates it (PI10). Filing uses INSERT ... ON CONFLICT (sku, location) DO UPDATE (PI9)."
+  },
+  {
+   "id": "SC2-add-tracking-code-index",
+   "story_id": "S2-find-by-tracking-code",
+   "kind": "add_index",
+   "table": "stock_records",
+   "detail": "Non-unique btree index ix_stock_records_tracking_code_updated_at on (tracking_code, updated_at) serving WHERE tracking_code = :code ORDER BY updated_at DESC LIMIT 1.",
+   "migration_note": "Downgrade drops the index; upgrade recreates it."
+  },
+  {
+   "id": "SC3-create-stock-adjustments",
+   "story_id": "S4-adjust-quantity-in-place",
+   "kind": "create_table",
+   "table": "stock_adjustments",
+   "detail": "Create stock_adjustments with NOT NULL columns, created_at DEFAULT now(), FK stock_record_id -> stock_records(id) ON DELETE RESTRICT, and the actor-not-blank and quantities-non-negative CHECKs. stock_records is not altered.",
+   "migration_note": "Additive. Downgrade drops only stock_adjustments, so stock_records rows survive (PI19)."
+  },
+  {
+   "id": "SC4-add-adjustments-record-index",
+   "story_id": "S4-adjust-quantity-in-place",
+   "kind": "add_index",
+   "table": "stock_adjustments",
+   "detail": "Non-unique btree ix_stock_adjustments_record_created_at on (stock_record_id, created_at, id) for the history query; also serves as the FK index.",
+   "migration_note": "Downgrade drops the index (and with it the table)."
+  },
+  {
+   "id": "SC5-add-adjustments-no-update-trigger",
+   "story_id": "S4-adjust-quantity-in-place",
+   "kind": "add_constraint",
+   "table": "stock_adjustments",
+   "detail": "plpgsql function stock_adjustments_reject_update() that RAISEs, plus BEFORE UPDATE FOR EACH ROW trigger trg_stock_adjustments_no_update. DELETE is left open at the DB.",
+   "migration_note": "Downgrade drops the trigger, then the function."
+  }
+ ],
+ "realizes_invariants": [
+  "PI1-sku-location-unique",
+  "PI2-sku-not-null",
+  "PI3-location-not-null",
+  "PI4-tracking-code-not-null",
+  "PI5-quantity-not-null",
+  "PI6-quantity-non-negative",
+  "PI7-par-level-non-negative",
+  "PI8-optional-text-not-blank",
+  "PI9-upsert-atomic",
+  "PI10-create-stock-records-reversible",
+  "PI11-adjustment-record-fk",
+  "PI12-adjustment-actor-not-null",
+  "PI13-adjustment-timestamp-not-null",
+  "PI14-adjustment-quantities-not-null",
+  "PI15-adjustment-actor-not-blank",
+  "PI16-adjustment-quantities-non-negative",
+  "PI17-adjustment-no-update",
+  "PI18-adjust-atomic",
+  "PI19-create-stock-adjustments-additive-reversible"
+ ],
+ "addresses_access_patterns": [
+  "AP1-lookup-by-tracking-code",
+  "AP2-records-by-sku",
+  "AP3-adjustments-by-record"
+ ]
+}

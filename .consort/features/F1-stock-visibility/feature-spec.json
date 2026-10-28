@@ -1,0 +1,12 @@
+{
+  "id": "F1-stock-visibility",
+  "name": "Stock visibility",
+  "status": "draft",
+  "tdd_mode": "N=1",
+  "stories": [
+    "S1-file-stock-record",
+    "S2-find-by-tracking-code",
+    "S3-view-stock-list-and-sku-detail",
+    "S4-adjust-quantity-in-place"
+  ]
+}

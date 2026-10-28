@@ -1,0 +1,359 @@
+{
+  "feature_id": "F1-stock-visibility",
+  "story_id": "S4-adjust-quantity-in-place",
+  "ordered_for": "design-momentum",
+  "items": [
+    {
+      "id": "T70",
+      "description": "An accepted POST /api/stock-records/{id}/adjustments writes exactly one stock_adjustments row carrying the submitted actor, quantity_before equal to the prior stored quantity and quantity_after equal to the new stored quantity (seeded with a per-run-unique sku, delta-scoped to that record)",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T71",
+      "description": "The created_at of an adjustment written by an accepted POST is assigned by the database server clock, within the test's own before/after now() window, not by the client",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T72",
+      "description": "An accepted adjustment updates the stock_records quantity and inserts its stock_adjustments entry in one transaction, so the stored quantity never changes without a matching audit row, verified directly against the branch database",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI18-adjust-atomic"
+    },
+    {
+      "id": "T73",
+      "description": "POST /api/stock-records/{id}/adjustments responds with Content-Type application/json for an accepted, a 422 and a 404 outcome, never text/html",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T74",
+      "description": "In a real browser against the live DB (Playwright e2e), submitting a new quantity in the inline adjust row shows it in stock-cell-quantity before the response arrives, and page.url() is unchanged with no navigation/reload (unique crypto.randomUUID()-suffixed sku)",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/adjust-row-optimistic.spec.ts"
+    },
+    {
+      "id": "T75",
+      "description": "The inline adjust row, once the real API responds, shows the server-returned record.quantity in stock-cell-quantity",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/AdjustRow.test.tsx"
+    },
+    {
+      "id": "T76",
+      "description": "Through the real <App> at route `/` in a browser against the live DB, submitting a new quantity and actor in the row's adjust-row-<sku>-<location> form shows the new value in stock-cell-quantity before the response, with no page reload and no navigation (sku is a crypto.randomUUID()-suffixed key used in the create fill and the locators)",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "client"
+    },
+    {
+      "id": "T77",
+      "description": "Through the real <App> at route `/` in a browser against the live DB, after an adjustment the row's stock-cell-quantity settles on the server-returned quantity, which matches the stored value on re-reading the stock list (unique crypto.randomUUID()-suffixed sku)",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "client"
+    },
+    {
+      "id": "T114",
+      "description": "An accepted POST /api/stock-records/{id}/adjustments returns 200 JSON whose record.quantity equals the newly stored quantity (the server-returned value the row's stock-cell-quantity settles on after the optimistic update)",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR14-optimistic-row-update"
+    },
+    {
+      "id": "T117",
+      "description": "The inline adjust row, given a real-API 422 for a below-zero quantity, shows field-error-quantity naming quantity and reverts stock-cell-quantity to the stored Q",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/AdjustRow.test.tsx"
+    },
+    {
+      "id": "T78",
+      "description": "POST /api/stock-records/{id}/adjustments with a negative quantity on a uniquely-keyed seeded record returns 422 whose errors[] names the 'quantity' field",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T79",
+      "description": "After a rejected negative-quantity adjustment, re-reading the record via the API shows the stored quantity is still the original Q",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T80",
+      "description": "After a rejected negative-quantity adjustment, GET /api/stock-records/{id}/adjustments returns an empty list (no audit entry written)",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T81",
+      "description": "POST /api/stock-records/{id}/adjustments with the quantity field omitted returns 422 whose errors[] names the 'quantity' field",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T82",
+      "description": "POST /api/stock-records/{id}/adjustments with quantity exactly 0 (boundary) returns 200 with record.quantity 0 and the stored quantity is 0",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T83",
+      "description": "The adjustment service, called with its required injected session and a negative new quantity, rejects the write naming 'quantity' while the repository write functions (quantity update, adjustment insert) are patched and asserted never called",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR13-adjust-non-negative"
+    },
+    {
+      "id": "T84",
+      "description": "POST /api/stock-records/{id}/adjustments with quantity < 0 returns 422 whose errors[] names 'quantity' and the stored quantity stays Q on the branch database",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR13-adjust-non-negative"
+    },
+    {
+      "id": "T85",
+      "description": "A direct INSERT into stock_adjustments with a negative quantity_before is rejected by the CHECK ck_stock_adjustments_quantities_non_negative",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI16-adjustment-quantities-non-negative"
+    },
+    {
+      "id": "T86",
+      "description": "POST /api/stock-records/{id}/adjustments with quantity < 0 returns 422 with errors[] naming 'quantity', and re-reading the record via the API returns the stored quantity Q (the server state the UI reverts stock-cell-quantity to and shows field-error-quantity from)",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR14-optimistic-row-update"
+    },
+    {
+      "id": "T115",
+      "description": "A rejected adjustment (negative quantity) leaves stock_records quantity and the stock_adjustments row count for that record unchanged on the branch database (delta-scoped to a per-run-unique sku)",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T87",
+      "description": "The adjustment service, called with its required injected session and a blank or whitespace-only actor, rejects the write naming 'actor' while the repository write functions are patched and asserted never called",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR15-adjustment-queryable-field-named"
+    },
+    {
+      "id": "T88",
+      "description": "POST /api/stock-records/{id}/adjustments with a blank actor returns 422 whose errors[] names 'actor'",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR15-adjustment-queryable-field-named"
+    },
+    {
+      "id": "T89",
+      "description": "A direct INSERT into stock_adjustments with an empty-string actor is rejected by the CHECK ck_stock_adjustments_actor_not_blank",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI15-adjustment-actor-not-blank"
+    },
+    {
+      "id": "T90",
+      "description": "A direct INSERT into stock_adjustments with a NULL actor is rejected by the NOT NULL constraint",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI12-adjustment-actor-not-null"
+    },
+    {
+      "id": "T91",
+      "description": "The inline adjust row submitted with a blank actor shows field-error-actor naming actor, with stock-cell-quantity unchanged",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/AdjustRow.test.tsx"
+    },
+    {
+      "id": "T116",
+      "description": "A rejected adjustment (blank actor) leaves stock_records quantity and the stock_adjustments row count for that record unchanged on the branch database (delta-scoped to a per-run-unique sku)",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T92",
+      "description": "Through the real <App> at route `/` in a browser against the live DB, submitting an adjustment with the actor left blank shows field-error-actor naming the actor field and leaves stock-cell-quantity at the stored value (unique crypto.randomUUID()-suffixed sku)",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "client"
+    },
+    {
+      "id": "T93",
+      "description": "GET /api/stock-records/{id}/adjustments returns every seeded adjustment with created_at, actor, quantity_before and quantity_after, ordered by created_at ascending then id",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR15-adjustment-queryable-field-named"
+    },
+    {
+      "id": "T94",
+      "description": "GET /api/stock-records/{id}/adjustments responds with Content-Type application/json for a 200 and a 404 outcome, never text/html",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T95",
+      "description": "With seeded stock_records rows (per-run-unique skus), downgrading to the stock_adjustments migration's own down_revision then upgrade head leaves every seeded stock_records row unchanged and recreates stock_adjustments with its columns, FK, checks and history index (explicit revision id, marked @pytest.mark.migration)",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI19-create-stock-adjustments-additive-reversible",
+      "schema_change_id": "SC3-create-stock-adjustments",
+      "nfr_id": "NFR16-additive-adjustments-migration"
+    },
+    {
+      "id": "T96",
+      "description": "The S4 alembic upgrade() functions contain only additive operations (create_table, create_index, trigger/function creation), no drop_column, drop_table or alter type",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR8-additive-migrations"
+    },
+    {
+      "id": "T97",
+      "description": "A direct INSERT into stock_adjustments referencing a nonexistent stock_record_id is rejected by the foreign key",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI11-adjustment-record-fk"
+    },
+    {
+      "id": "T98",
+      "description": "A direct INSERT into stock_adjustments omitting created_at stores a non-null DB-assigned timestamp from the server DEFAULT now()",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI13-adjustment-timestamp-not-null"
+    },
+    {
+      "id": "T99",
+      "description": "A direct INSERT into stock_adjustments with a NULL quantity_before is rejected by the NOT NULL constraint",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI14-adjustment-quantities-not-null"
+    },
+    {
+      "id": "T100",
+      "description": "The adjustment-history panel for a record with seeded adjustments renders one history-entry-<n> per adjustment in time order, each with history-timestamp, history-actor, history-qty-before, history-qty-after",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/AdjustmentHistory.test.tsx"
+    },
+    {
+      "id": "T101",
+      "description": "The adjustment-history panel for a record with no adjustments renders the history-empty empty-state instead of a blank table",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/AdjustmentHistory.test.tsx"
+    },
+    {
+      "id": "T102",
+      "description": "Through the real <App> at route `/` in a browser against the live DB, opening history-toggle-<sku>-<location> after accepted adjustments shows the adjustment-history panel with one history-entry-<n> per adjustment (unique crypto.randomUUID()-suffixed sku)",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "client"
+    },
+    {
+      "id": "T103",
+      "description": "Through the real <App> at route `/` in a browser against the live DB, each history-entry-<n> shows history-timestamp, history-actor, history-qty-before and history-qty-after in time order matching the adjustments entered (unique crypto.randomUUID()-suffixed sku)",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "client"
+    },
+    {
+      "id": "T107",
+      "description": "After a refused DELETE of an adjustment, GET /api/stock-records/{id}/adjustments still lists the entry with its original timestamp, actor and quantity_before/after",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T108",
+      "description": "DELETE /api/stock-records/{id}/adjustments/{adjustment_id} returns 405 with a JSON detail, the entry's timestamp, actor and quantities unchanged afterwards",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T109",
+      "description": "PUT /api/stock-records/{id}/adjustments/{adjustment_id} returns 405 with a JSON detail, the entry unchanged afterwards",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T110",
+      "description": "PATCH /api/stock-records/{id}/adjustments/{adjustment_id} returns 405 with a JSON detail, the entry unchanged afterwards",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T111",
+      "description": "The 405 response of the adjustment-mutation path has Content-Type application/json, never text/html",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T112",
+      "description": "A direct UPDATE of an existing stock_adjustments entry's created_at is refused by trigger trg_stock_adjustments_no_update, the row unchanged on re-read",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI17-adjustment-no-update",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T113",
+      "description": "The adjustment entry path advertises no mutation: an OPTIONS/Allow check on /api/stock-records/{id}/adjustments/{adjustment_id} lists none of PUT, PATCH, DELETE",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "behavior",
+      "scenario_file": "tests/features/S4-audit-immutable.feature"
+    }
+  ]
+}

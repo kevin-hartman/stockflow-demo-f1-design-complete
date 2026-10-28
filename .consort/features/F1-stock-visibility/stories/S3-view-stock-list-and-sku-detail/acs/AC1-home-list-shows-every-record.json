@@ -1,0 +1,18 @@
+{
+  "id": "AC1-home-list-shows-every-record",
+  "given": "stock records exist, including one SKU held at two or more locations",
+  "when": "the operator opens the home stock list",
+  "then": "one row is shown per (sku, location) record with its SKU, location, tracking code, and quantity, so the same SKU appears once for each location",
+  "status": "draft",
+  "layer": "E2E",
+  "architectural_notes": "Client↔server read: the Stock home page (client/src/pages + hooks/api) fetches EP3 from the app/routes boundary, which delegates to app/services/stock_records.py and the repository list query; one stock-table row per (sku, location) row returned. Verified by Playwright against the live API on the paired branch with a SKU seeded at two locations.",
+  "ui_seams": [
+    "stock-table",
+    "stock-row-<sku>-<location>",
+    "stock-cell-sku",
+    "stock-cell-location",
+    "stock-cell-tracking-code",
+    "stock-cell-quantity"
+  ],
+  "api_contract_id": "EP3-list-stock-records"
+}

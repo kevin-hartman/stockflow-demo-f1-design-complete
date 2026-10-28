@@ -1,0 +1,7 @@
+{
+  "id": "S1-file-stock-record",
+  "asA": "operator",
+  "iWantTo": "file a stock record for a SKU at a location with a tracking code",
+  "soThat": "the stock is recorded, one record per (sku, location)",
+  "requires_e2e": true
+}

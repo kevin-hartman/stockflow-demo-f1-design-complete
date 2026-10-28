@@ -1,0 +1,11 @@
+[
+{"id":"bhv-1","description":"POST /api/stock-records/{id}/adjustments with a negative quantity on a uniquely-keyed seeded record returns 422 whose errors[] names the 'quantity' field","ac_id":"AC2-adjust-below-zero-rejected","status":"pending","kind":"behavior"},
+{"id":"bhv-2","description":"After a rejected negative-quantity adjustment, re-reading the record via the API shows the stored quantity is still the original Q","ac_id":"AC2-adjust-below-zero-rejected","status":"pending","kind":"behavior"},
+{"id":"bhv-3","description":"After a rejected negative-quantity adjustment, GET /api/stock-records/{id}/adjustments returns an empty list (no audit entry written)","ac_id":"AC2-adjust-below-zero-rejected","status":"pending","kind":"behavior"},
+{"id":"bhv-4","description":"POST /api/stock-records/{id}/adjustments with the quantity field omitted returns 422 whose errors[] names the 'quantity' field","ac_id":"AC2-adjust-below-zero-rejected","status":"pending","kind":"behavior"},
+{"id":"bhv-5","description":"POST /api/stock-records/{id}/adjustments with quantity exactly 0 (boundary) returns 200 with record.quantity 0 and the stored quantity is 0","ac_id":"AC2-adjust-below-zero-rejected","status":"pending","kind":"behavior"},
+{"id":"bhv-6","description":"DELETE /api/stock-records/{id}/adjustments/{adjustment_id} on an existing adjustment returns 405 with a JSON detail","ac_id":"AC5-audit-entries-immutable","status":"pending","kind":"behavior"},
+{"id":"bhv-7","description":"PUT /api/stock-records/{id}/adjustments/{adjustment_id} on an existing adjustment returns 405 with a JSON detail","ac_id":"AC5-audit-entries-immutable","status":"pending","kind":"behavior"},
+{"id":"bhv-8","description":"PATCH /api/stock-records/{id}/adjustments/{adjustment_id} on an existing adjustment returns 405 with a JSON detail","ac_id":"AC5-audit-entries-immutable","status":"pending","kind":"behavior"},
+{"id":"bhv-9","description":"After a refused DELETE of an adjustment, GET /api/stock-records/{id}/adjustments still lists the entry with its original timestamp, actor and quantity_before/after","ac_id":"AC5-audit-entries-immutable","status":"pending","kind":"behavior"}
+]

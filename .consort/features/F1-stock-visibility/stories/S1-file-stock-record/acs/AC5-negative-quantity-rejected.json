@@ -1,0 +1,14 @@
+{
+  "id": "AC5-negative-quantity-rejected",
+  "given": "the operator is filing a stock record",
+  "when": "they submit a quantity below zero",
+  "then": "a clear message naming the quantity field is shown and no record is created or changed, so stock never goes below zero",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "Range rule on a present value (R2), breakable independently of required-field presence checks in AC4."
+  },
+  "layer": "API",
+  "architectural_notes": "Domain rule quantity >= 0 enforced in app/services/stock_records.py (422 naming 'quantity') with the DB CHECK PI6 as defense in depth, so a negative never persists (R2). Verified by branch-DB API test that stock_records is unchanged.",
+  "api_contract_id": "EP1-file-stock-record"
+}

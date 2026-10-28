@@ -1,0 +1,50 @@
+[
+ {
+  "id": "cmp-1",
+  "description": "StockTable rendered against the real EP3 API shows one stock-row-<sku>-<location> row per record with stock-cell-sku, stock-cell-location, stock-cell-tracking-code and stock-cell-quantity text, in the stock-table design-guide class",
+  "ac_id": "AC1-home-list-shows-every-record",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/StockTable.test.tsx"
+ },
+ {
+  "id": "cmp-2",
+  "description": "StockTable rendered against the real EP3 API with one uuid-suffixed SKU filed at two locations shows that SKU in two separate rows, one per location",
+  "ac_id": "AC1-home-list-shows-every-record",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/StockTable.test.tsx"
+ },
+ {
+  "id": "cmp-3",
+  "description": "SkuDetail rendered for a uuid-suffixed SKU against the real EP4 API shows sku-detail-title and one sku-location-row-<location> per location with quantity and tracking code, and no rows for a distractor SKU",
+  "ac_id": "AC2-sku-detail-shows-all-its-locations",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/SkuDetail.test.tsx"
+ },
+ {
+  "id": "cmp-4",
+  "description": "StockTable row for a record with NULL par_level, batch and serial renders the text 'not tracked' (not-tracked muted seam) in stock-cell-par-level, stock-cell-batch and stock-cell-serial, never blank (NFR11 clause 1)",
+  "ac_id": "AC3-list-and-detail-show-not-tracked",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/StockTable.test.tsx"
+ },
+ {
+  "id": "cmp-5",
+  "description": "SkuDetail sku-locations row for a record with NULL par_level, batch and serial renders 'not tracked' in sku-location-par-level, sku-location-batch and sku-location-serial, never blank (NFR11 clause 2)",
+  "ac_id": "AC3-list-and-detail-show-not-tracked",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/SkuDetail.test.tsx"
+ },
+ {
+  "id": "cmp-6",
+  "description": "Stock list rendered against a real EP3 API returning [] shows the stock-empty empty-state ('No stock recorded yet') with a File stock link to /stock/new instead of a blank table or error",
+  "ac_id": "AC4-empty-list-shows-empty-state",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/StockList.test.tsx"
+ }
+]

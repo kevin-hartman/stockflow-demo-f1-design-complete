@@ -1,0 +1,530 @@
+{
+  "feature_id": "F1-stock-visibility",
+  "service_backed": true,
+  "layers": [
+    {
+      "name": "routes",
+      "role": "boundary",
+      "module": "app/routes/",
+      "renders_via": "react",
+      "may_import": [
+        "service"
+      ]
+    },
+    {
+      "name": "services",
+      "role": "service",
+      "module": "app/services/",
+      "may_import": [
+        "repository",
+        "models"
+      ]
+    },
+    {
+      "name": "repositories",
+      "role": "repository",
+      "module": "app/repositories/",
+      "may_import": [
+        "models",
+        "infrastructure"
+      ]
+    },
+    {
+      "name": "models",
+      "role": "models",
+      "module": "app/models/",
+      "may_import": [
+        "infrastructure"
+      ]
+    },
+    {
+      "name": "database",
+      "role": "infrastructure",
+      "module": "app/database.py",
+      "may_import": []
+    }
+  ],
+  "persistence_invariants": [
+    {
+      "id": "PI1-sku-location-unique",
+      "type": "unique",
+      "table": "stock_records",
+      "brief": "A UNIQUE constraint on (sku, location) rejects a second row for the same pair at the DB, so two stored duplicates can never exist (R3)."
+    },
+    {
+      "id": "PI2-sku-not-null",
+      "type": "not_null",
+      "table": "stock_records",
+      "brief": "sku is NOT NULL: inserting a row with a null sku is rejected by the DB."
+    },
+    {
+      "id": "PI3-location-not-null",
+      "type": "not_null",
+      "table": "stock_records",
+      "brief": "location is NOT NULL: inserting a row with a null location is rejected by the DB."
+    },
+    {
+      "id": "PI4-tracking-code-not-null",
+      "type": "not_null",
+      "table": "stock_records",
+      "brief": "tracking_code is NOT NULL: inserting a row with a null tracking_code is rejected by the DB."
+    },
+    {
+      "id": "PI5-quantity-not-null",
+      "type": "not_null",
+      "table": "stock_records",
+      "brief": "quantity is NOT NULL: inserting a row with a null quantity is rejected by the DB."
+    },
+    {
+      "id": "PI6-quantity-non-negative",
+      "type": "check",
+      "table": "stock_records",
+      "brief": "CHECK (quantity >= 0) rejects a negative quantity at the DB, so a stored negative stock level is impossible (R2)."
+    },
+    {
+      "id": "PI7-par-level-non-negative",
+      "type": "check",
+      "table": "stock_records",
+      "brief": "CHECK (par_level IS NULL OR par_level >= 0): par_level is nullable (absent = not tracked) but never negative."
+    },
+    {
+      "id": "PI8-optional-text-not-blank",
+      "type": "check",
+      "table": "stock_records",
+      "brief": "CHECK (batch IS NULL OR batch <> '') AND (serial IS NULL OR serial <> ''): an absent optional detail is NULL, never an empty string (AC3, R9)."
+    },
+    {
+      "id": "PI9-upsert-atomic",
+      "type": "transactional",
+      "table": "stock_records",
+      "brief": "Filing is a single INSERT ... ON CONFLICT (sku, location) DO UPDATE in one transaction: a re-file updates the one existing row in place, and a rejected write leaves the table unchanged."
+    },
+    {
+      "id": "PI10-create-stock-records-reversible",
+      "type": "migration_reversible",
+      "table": "stock_records",
+      "brief": "Initial create_table: after downgrade to the migration's down_revision then upgrade head, stock_records and its columns, unique and check constraints are present again (schema recreated; no data-survival claim for the initial creation)."
+    },
+    {
+      "id": "PI11-adjustment-record-fk",
+      "type": "foreign_key",
+      "table": "stock_adjustments",
+      "brief": "stock_adjustments.stock_record_id is NOT NULL and REFERENCES stock_records(id) ON DELETE RESTRICT: an adjustment for a nonexistent record is rejected, and a stock record with audit history cannot be silently deleted out from under its trail."
+    },
+    {
+      "id": "PI12-adjustment-actor-not-null",
+      "type": "not_null",
+      "table": "stock_adjustments",
+      "brief": "actor is NOT NULL: inserting an adjustment with a null actor is rejected by the DB (R1)."
+    },
+    {
+      "id": "PI13-adjustment-timestamp-not-null",
+      "type": "not_null",
+      "table": "stock_adjustments",
+      "brief": "created_at is NOT NULL with a server DEFAULT now(): every adjustment carries a DB-assigned timestamp, never a client-supplied or missing one (R1)."
+    },
+    {
+      "id": "PI14-adjustment-quantities-not-null",
+      "type": "not_null",
+      "table": "stock_adjustments",
+      "brief": "quantity_before and quantity_after are NOT NULL: inserting an adjustment missing either is rejected by the DB."
+    },
+    {
+      "id": "PI15-adjustment-actor-not-blank",
+      "type": "check",
+      "table": "stock_adjustments",
+      "brief": "CHECK (btrim(actor) <> ''): a blank or whitespace-only actor is rejected at the DB (AC3 defense in depth)."
+    },
+    {
+      "id": "PI16-adjustment-quantities-non-negative",
+      "type": "check",
+      "table": "stock_adjustments",
+      "brief": "CHECK (quantity_before >= 0 AND quantity_after >= 0): an audit entry can never record a negative stock level (R2)."
+    },
+    {
+      "id": "PI17-adjustment-no-update",
+      "type": "check",
+      "table": "stock_adjustments",
+      "brief": "A BEFORE UPDATE trigger on stock_adjustments raises, so a direct UPDATE of any entry's timestamp, actor or quantities is refused at the DB and the row stays exactly as recorded (R1, AC5). DELETE is refused at the API (no delete route); the DB leaves DELETE open only so FK-aware test cleanup can run."
+    },
+    {
+      "id": "PI18-adjust-atomic",
+      "type": "transactional",
+      "table": "stock_adjustments",
+      "brief": "An adjustment locks the stock_records row (SELECT ... FOR UPDATE), updates its quantity and inserts the stock_adjustments entry (quantity_before = prior stored value) in ONE transaction: a rejected adjustment leaves both stock_records and stock_adjustments unchanged, and an accepted one never updates quantity without its audit entry."
+    },
+    {
+      "id": "PI19-create-stock-adjustments-additive-reversible",
+      "type": "migration_reversible",
+      "table": "stock_adjustments",
+      "brief": "Additive migration on pre-existing stock_records: upgrade creates stock_adjustments without altering stock_records; downgrade to its down_revision drops only stock_adjustments and every pre-existing stock_records row survives unchanged; upgrade head recreates stock_adjustments with its FK, checks and trigger (R1, R8)."
+    }
+  ],
+  "access_patterns": [
+    {
+      "id": "AP1-lookup-by-tracking-code",
+      "table": "stock_records",
+      "columns": [
+        "tracking_code"
+      ],
+      "story": "S2-find-by-tracking-code",
+      "brief": "Equality lookup WHERE tracking_code = :code ORDER BY updated_at DESC LIMIT 1 for scan-to-screen under ~200ms (R6); non-unique btree index candidate."
+    },
+    {
+      "id": "AP2-records-by-sku",
+      "table": "stock_records",
+      "columns": [
+        "sku"
+      ],
+      "story": "S3-view-stock-list-and-sku-detail",
+      "brief": "Equality filter WHERE sku = :sku ORDER BY location for the SKU detail view; likely served by the leading column of the (sku, location) unique index (PI1), so the DBA may record a deliberate no-new-index decision."
+    },
+    {
+      "id": "AP3-adjustments-by-record",
+      "table": "stock_adjustments",
+      "columns": [
+        "stock_record_id",
+        "created_at"
+      ],
+      "story": "S4-adjust-quantity-in-place",
+      "brief": "Equality filter WHERE stock_record_id = :id ORDER BY created_at, id for the adjustment history panel (AC4); composite btree index candidate (also serves the FK)."
+    }
+  ],
+  "api_contracts": [
+    {
+      "id": "EP1-file-stock-record",
+      "method": "POST",
+      "path": "/api/stock-records",
+      "shape": "object",
+      "item": "Request JSON {sku: string, location: string, tracking_code: string, quantity: int>=0, par_level: int|null, batch: string|null, serial: string|null} (blank optional strings normalized to null by the service). Success: 201 when a new (sku, location) is filed, 200 when an existing pair is updated in place; body {outcome: 'filed'|'updated', record: {id: int, sku: string, location: string, tracking_code: string, quantity: int, par_level: int|null, batch: string|null, serial: string|null, created_at: ISO-8601, updated_at: ISO-8601}}. Validation failure: 422 with body {errors: [{field: 'sku'|'location'|'tracking_code'|'quantity'|'par_level', message: string naming the field}]}; no row created or changed.",
+      "story": "S1-file-stock-record"
+    },
+    {
+      "id": "EP2-lookup-by-tracking-code",
+      "method": "GET",
+      "path": "/api/stock-records/lookup",
+      "query": [
+        "code"
+      ],
+      "shape": "object",
+      "item": "200: {record: {id: int, sku: string, location: string, tracking_code: string, quantity: int, par_level: int|null, batch: string|null, serial: string|null, created_at: ISO-8601, updated_at: ISO-8601}} for the most recently updated row whose tracking_code equals code. 404: {detail: string, code: string} when no row matches (client renders lookup-not-found, never an error page). 422 {errors:[{field:'code', message}]} when code is blank.",
+      "story": "S2-find-by-tracking-code"
+    },
+    {
+      "id": "EP3-list-stock-records",
+      "method": "GET",
+      "path": "/api/stock-records",
+      "shape": "list",
+      "item": "200: bare JSON array of stock records {id: int, sku: string, location: string, tracking_code: string, quantity: int, par_level: int|null, batch: string|null, serial: string|null, created_at: ISO-8601, updated_at: ISO-8601}, one per (sku, location), ordered by sku then location; [] when no rows exist (client renders stock-empty).",
+      "story": "S3-view-stock-list-and-sku-detail"
+    },
+    {
+      "id": "EP4-sku-stock-records",
+      "method": "GET",
+      "path": "/api/skus/{sku}/stock-records",
+      "shape": "list",
+      "item": "200: bare JSON array of the stock records {id: int, sku: string, location: string, tracking_code: string, quantity: int, par_level: int|null, batch: string|null, serial: string|null, created_at: ISO-8601, updated_at: ISO-8601} whose sku equals the path sku, ordered by location; [] when the SKU has no records (client renders sku-not-found).",
+      "story": "S3-view-stock-list-and-sku-detail"
+    },
+    {
+      "id": "EP5-adjust-stock-quantity",
+      "method": "POST",
+      "path": "/api/stock-records/{id}/adjustments",
+      "shape": "object",
+      "item": "Request JSON {quantity: int (the NEW absolute quantity, >= 0), actor: string (operator-typed, required, no auth)}. 200: {record: {id: int, sku: string, location: string, tracking_code: string, quantity: int, par_level: int|null, batch: string|null, serial: string|null, created_at: ISO-8601, updated_at: ISO-8601}, adjustment: {id: int, stock_record_id: int, actor: string, quantity_before: int, quantity_after: int, created_at: ISO-8601 (server-assigned)}}; record.quantity is the stored value the client reconciles its optimistic row to. 422: {errors: [{field: 'quantity'|'actor', message: string naming the field}]} when quantity < 0 / missing or actor blank; nothing written. 404 {detail: string} when the record id does not exist.",
+      "story": "S4-adjust-quantity-in-place"
+    },
+    {
+      "id": "EP6-list-stock-adjustments",
+      "method": "GET",
+      "path": "/api/stock-records/{id}/adjustments",
+      "shape": "list",
+      "item": "200: bare JSON array of {id: int, stock_record_id: int, actor: string, quantity_before: int, quantity_after: int, created_at: ISO-8601 (server-assigned)} for that record, ordered by created_at then id ascending (time order); [] when none (client renders history-empty). 404 {detail} when the record id does not exist.",
+      "story": "S4-adjust-quantity-in-place"
+    },
+    {
+      "id": "EP7-refuse-adjustment-mutation",
+      "method": "DELETE",
+      "path": "/api/stock-records/{id}/adjustments/{adjustment_id}",
+      "shape": "object",
+      "item": "Always 405 {detail: string} (PUT and PATCH on the same path also 405 {detail}); no route mutates or deletes an audit entry, and the entry is unchanged afterwards.",
+      "story": "S4-adjust-quantity-in-place"
+    }
+  ],
+  "nfrs": [
+    {
+      "id": "NFR1-migration-durability",
+      "brief_ref": "R1",
+      "tier": "product",
+      "applies_to": "S1-file-stock-record",
+      "fitness_functions": [
+        "downgrade of the stock_records migration to its down_revision followed by upgrade head recreates stock_records with its unique and check constraints"
+      ],
+      "hil_status": "accepted",
+      "requirement": "Schema migrations never lose stock data. For S1 (initial create_table) this is schema reversibility; row-preservation applies to each later additive migration on stock_records. The adjustment actor/timestamp audit trail is deferred to the story introducing adjustments (OD1-adjustment-audit-trail).",
+      "fitness_function": "downgrade of the stock_records migration to its down_revision followed by upgrade head recreates stock_records with its unique and check constraints"
+    },
+    {
+      "id": "NFR2-non-negative-stock",
+      "brief_ref": "R2",
+      "tier": "product",
+      "applies_to": "S1-file-stock-record",
+      "fitness_functions": [
+        "POST /api/stock-records with quantity < 0 returns 422 naming 'quantity' and leaves stock_records unchanged",
+        "a direct INSERT of a negative quantity into stock_records is rejected by the DB check constraint"
+      ],
+      "hil_status": "accepted",
+      "requirement": "Stock never goes below zero. Overcommit is N/A in F1 (no pick/allocation operation); tracked as OD2-overcommit-rule for the pick feature.",
+      "fitness_function": "POST /api/stock-records with quantity < 0 returns 422 naming 'quantity' and leaves stock_records unchanged; a direct INSERT of a negative quantity into stock_records is rejected by the DB check constraint"
+    },
+    {
+      "id": "NFR3-sku-location-unique",
+      "brief_ref": "R3",
+      "tier": "product",
+      "applies_to": "S1-file-stock-record",
+      "fitness_functions": [
+        "re-filing an existing (sku, location) via POST /api/stock-records returns 200 outcome 'updated' and exactly one row exists for that pair with the new values",
+        "a direct INSERT of a duplicate (sku, location) into stock_records is rejected by the unique constraint"
+      ],
+      "hil_status": "accepted",
+      "requirement": "Every (sku, location) is uniquely addressable; a collision is resolved at write time by upsert, never a duplicate row or an error page.",
+      "fitness_function": "re-filing an existing (sku, location) via POST /api/stock-records returns 200 outcome 'updated' and exactly one row exists for that pair with the new values; a direct INSERT of a duplicate (sku, location) into stock_records is rejected by the unique constraint"
+    },
+    {
+      "id": "NFR4-real-branch-tests",
+      "brief_ref": "R4",
+      "tier": "platform",
+      "applies_to": "F1-stock-visibility",
+      "fitness_function": "the test session fixture refuses to run unless DATABASE_URL is a postgresql URL (no sqlite / in-memory engine)",
+      "hil_status": "accepted",
+      "requirement": "Integration tests run against the paired Lakebase branch (DATABASE_URL), never a mock or in-memory DB."
+    },
+    {
+      "id": "NFR5-spa-json-boundary",
+      "brief_ref": "R5",
+      "tier": "platform",
+      "applies_to": "F1-stock-visibility",
+      "fitness_function": "every /api/* route of the feature responds with Content-Type application/json, never text/html",
+      "hil_status": "accepted",
+      "requirement": "The UI is the React + TypeScript SPA under client/ with client-side routing; the backend boundary returns JSON, never server-rendered HTML."
+    },
+    {
+      "id": "NFR6-scan-latency",
+      "brief_ref": "R6",
+      "tier": "product",
+      "applies_to": "S2-find-by-tracking-code",
+      "fitness_function": "GET /api/stock-records/lookup?code=T responds within 200ms against the paired branch for a seeded record",
+      "hil_status": "accepted",
+      "requirement": "Scan-to-UI perceived response under ~200ms (S2 AC2): the lookup is one indexed query (AP1) and the client updates in place without a full reload."
+    },
+    {
+      "id": "NFR7-field-named-validation",
+      "brief_ref": "R7",
+      "tier": "product",
+      "applies_to": "S1-file-stock-record",
+      "fitness_functions": [
+        "POST /api/stock-records missing a required field returns 422 whose errors[] names exactly that field",
+        "the file-stock form renders the server's field error in field-error-<name> for the named field"
+      ],
+      "hil_status": "accepted",
+      "requirement": "Validation messages name the offending field, never a generic 'bad request'. Adjustment actor/timestamp queryability is deferred with OD1-adjustment-audit-trail.",
+      "fitness_function": "POST /api/stock-records missing a required field returns 422 whose errors[] names exactly that field; the file-stock form renders the server's field error in field-error-<name> for the named field"
+    },
+    {
+      "id": "NFR8-additive-migrations",
+      "brief_ref": "R8",
+      "tier": "platform",
+      "applies_to": "F1-stock-visibility",
+      "fitness_function": "the feature's alembic upgrade() functions contain only additive operations (create_table, add_column, create_index, create_check/unique constraint), no drop_column/drop_table/alter type",
+      "hil_status": "accepted",
+      "requirement": "Migrations are additive where possible so reads keep working during rollout."
+    },
+    {
+      "id": "NFR9-optional-detail-absent",
+      "brief_ref": "R9",
+      "tier": "product",
+      "applies_to": "S1-file-stock-record",
+      "fitness_functions": [
+        "filing with par_level, batch and serial blank stores NULL in all three columns (not '' and not 0)"
+      ],
+      "hil_status": "accepted",
+      "requirement": "A record missing optional detail (par level, batch, serial) is stored absent (NULL) so readers render 'not tracked'; rendering is owned by the list/detail story.",
+      "fitness_function": "filing with par_level, batch and serial blank stores NULL in all three columns (not '' and not 0)"
+    },
+    {
+      "id": "NFR10-lookup-not-tracked-render",
+      "brief_ref": "R9",
+      "tier": "product",
+      "applies_to": "S2-find-by-tracking-code",
+      "fitness_function": "looking up a record whose par_level, batch and serial are NULL renders 'not tracked' in lookup-result-par-level/-batch/-serial, never blank or a crash",
+      "hil_status": "accepted",
+      "requirement": "Lookup result renders absent optional detail as an explicit 'not tracked' (R9 reader side; NFR9 covers storage)."
+    },
+    {
+      "id": "NFR11-list-detail-not-tracked-render",
+      "brief_ref": "R9",
+      "tier": "product",
+      "applies_to": "S3-view-stock-list-and-sku-detail",
+      "requirement": "Stock list and SKU detail render absent optional detail as an explicit 'not tracked' (R9 reader side for S3; NFR9 covers storage).",
+      "fitness_functions": [
+        {
+          "clause": "a stock-table row whose par_level, batch and serial are NULL renders 'not tracked' in stock-cell-par-level/-batch/-serial, never blank or a crash",
+          "realized_by": [
+            "AC3-list-and-detail-show-not-tracked"
+          ]
+        },
+        {
+          "clause": "a sku-locations row whose par_level, batch and serial are NULL renders 'not tracked' in sku-location-par-level/-batch/-serial, never blank or a crash",
+          "realized_by": [
+            "AC3-list-and-detail-show-not-tracked"
+          ]
+        }
+      ],
+      "hil_status": "accepted",
+      "fitness_function": "viewing a record whose par_level, batch and serial are NULL renders 'not tracked' in both the stock-table cells and the sku-locations cells, never blank or a crash"
+    },
+    {
+      "id": "NFR12-immutable-adjustment-audit",
+      "brief_ref": "R1",
+      "tier": "product",
+      "applies_to": "S4-adjust-quantity-in-place",
+      "hil_status": "accepted",
+      "requirement": "Every accepted inventory adjustment records an unmodifiable server timestamp, the caller-supplied actor, and quantity before/after in stock_adjustments, atomically with the quantity change (resolves OD1).",
+      "fitness_functions": [
+        {
+          "clause": "an accepted POST /api/stock-records/{id}/adjustments writes exactly one stock_adjustments row with the submitted actor, a server created_at, and quantity_before/after equal to the prior and new stored quantity",
+          "realized_by": [
+            "AC1-adjust-updates-row-in-place"
+          ]
+        },
+        {
+          "clause": "a rejected adjustment (negative quantity or blank actor) leaves stock_records and stock_adjustments unchanged",
+          "realized_by": [
+            "AC2-adjust-below-zero-rejected",
+            "AC3-missing-actor-named"
+          ]
+        },
+        {
+          "clause": "DELETE/PUT/PATCH on an adjustment entry returns 405 and a direct DB UPDATE of the entry is refused; the entry's timestamp, actor and quantities are unchanged",
+          "realized_by": [
+            "AC5-audit-entries-immutable"
+          ]
+        }
+      ],
+      "fitness_function": "an accepted POST /api/stock-records/{id}/adjustments writes exactly one stock_adjustments row with the submitted actor, a server created_at, and quantity_before/after equal to the prior and new stored quantity; a rejected adjustment (negative quantity or blank actor) leaves stock_records and stock_adjustments unchanged; DELETE/PUT/PATCH on an adjustment entry returns 405 and a direct DB UPDATE of the entry is refused; the entry's timestamp, actor and quantities are unchanged"
+    },
+    {
+      "id": "NFR13-adjust-non-negative",
+      "brief_ref": "R2",
+      "tier": "product",
+      "applies_to": "S4-adjust-quantity-in-place",
+      "hil_status": "accepted",
+      "requirement": "An adjustment can never leave stock below zero: rejected at the service with a 422 naming quantity, with PI6 as DB defense in depth.",
+      "fitness_functions": [
+        {
+          "clause": "POST /api/stock-records/{id}/adjustments with quantity < 0 returns 422 naming 'quantity' and the stored quantity stays Q",
+          "realized_by": [
+            "AC2-adjust-below-zero-rejected"
+          ]
+        }
+      ],
+      "fitness_function": "POST /api/stock-records/{id}/adjustments with quantity < 0 returns 422 naming 'quantity' and the stored quantity stays Q"
+    },
+    {
+      "id": "NFR14-optimistic-row-update",
+      "brief_ref": "R5",
+      "tier": "product",
+      "applies_to": "S4-adjust-quantity-in-place",
+      "hil_status": "accepted",
+      "requirement": "An adjustment updates the affected row in place optimistically with no page reload, reconciles to the server-returned quantity, and reverts on rejection.",
+      "fitness_functions": [
+        {
+          "clause": "submitting an adjustment shows the new value in the row's stock-cell-quantity before the response with no navigation/reload, then shows the server-returned record.quantity",
+          "realized_by": [
+            "AC1-adjust-updates-row-in-place"
+          ]
+        },
+        {
+          "clause": "a 422 rejection reverts the row's stock-cell-quantity to the stored Q and shows field-error-quantity",
+          "realized_by": [
+            "AC2-adjust-below-zero-rejected"
+          ]
+        }
+      ],
+      "fitness_function": "submitting an adjustment shows the new value in the row's stock-cell-quantity before the response with no navigation/reload, then shows the server-returned record.quantity; a 422 rejection reverts the row's stock-cell-quantity to the stored Q and shows field-error-quantity"
+    },
+    {
+      "id": "NFR15-adjustment-queryable-field-named",
+      "brief_ref": "R7",
+      "tier": "product",
+      "applies_to": "S4-adjust-quantity-in-place",
+      "hil_status": "accepted",
+      "requirement": "Each adjustment's timestamp + actor is queryable via EP6 in time order, and adjustment validation names the offending field.",
+      "fitness_functions": [
+        {
+          "clause": "GET /api/stock-records/{id}/adjustments returns every adjustment with created_at, actor, quantity_before, quantity_after ordered by created_at ascending",
+          "realized_by": [
+            "AC4-adjustment-history-lookup"
+          ]
+        },
+        {
+          "clause": "POST /api/stock-records/{id}/adjustments with a blank actor returns 422 whose errors[] names 'actor' and the form renders it in field-error-actor",
+          "realized_by": [
+            "AC3-missing-actor-named"
+          ]
+        }
+      ],
+      "fitness_function": "GET /api/stock-records/{id}/adjustments returns every adjustment with created_at, actor, quantity_before, quantity_after ordered by created_at ascending; POST /api/stock-records/{id}/adjustments with a blank actor returns 422 whose errors[] names 'actor' and the form renders it in field-error-actor"
+    },
+    {
+      "id": "NFR16-additive-adjustments-migration",
+      "brief_ref": "R8",
+      "tier": "product",
+      "applies_to": "S4-adjust-quantity-in-place",
+      "hil_status": "accepted",
+      "requirement": "The stock_adjustments migration is purely additive; existing stock_records rows survive its downgrade/upgrade and existing list/lookup/detail reads keep working.",
+      "fitness_functions": [
+        {
+          "clause": "with seeded stock_records rows, downgrading the stock_adjustments migration to its down_revision then upgrading head leaves every stock_records row unchanged and recreates stock_adjustments",
+          "realized_by": [
+            "AC4-adjustment-history-lookup"
+          ]
+        }
+      ],
+      "fitness_function": "with seeded stock_records rows, downgrading the stock_adjustments migration to its down_revision then upgrading head leaves every stock_records row unchanged and recreates stock_adjustments"
+    }
+  ],
+  "open_decisions": [
+    {
+      "id": "OD1-adjustment-audit-trail",
+      "question": "Where is the immutable timestamp + caller-supplied actor (no auth in V1) for each inventory adjustment stored (separate stock_movements table vs columns on stock_records)? S1 filing records only created_at/updated_at.",
+      "decision_status": "resolved",
+      "resolved_by_story": "S4-adjust-quantity-in-place",
+      "resolution": "A separate append-only stock_adjustments table (FK stock_record_id, actor typed by the operator \u2014 no auth in V1 \u2014 server created_at, quantity_before/after), written atomically with the stock_records quantity update (PI18). S1 filing/re-file does NOT write an adjustment entry, so gated S1 ACs are unaffected; stock_records stays the one row per (sku, location)."
+    },
+    {
+      "id": "OD2-overcommit-rule",
+      "question": "The R2 no-overcommit rule needs a pick/allocation operation, which F1 does not introduce; which feature/story owns it?",
+      "decision_status": "deferred"
+    },
+    {
+      "id": "OD3-tracking-code-uniqueness",
+      "question": "Is tracking_code unique across stock_records (one record per code) or may several (sku, location) rows share a code for find-by-tracking-code?",
+      "decision_status": "resolved",
+      "resolved_by_story": "S2-find-by-tracking-code",
+      "resolution": "tracking_code is NOT unique (no DB unique constraint; S1 filing never rejects a shared code, so adding one would contradict gated S1 AC1/AC2). Lookup returns the single most recently updated matching row (EP2), indexed by AP1."
+    },
+    {
+      "id": "OD4-file-outcome-status",
+      "question": "How does the API distinguish a new filing from a re-file?",
+      "decision_status": "resolved",
+      "resolved_by_story": "S1-file-stock-record",
+      "resolution": "201 + outcome 'filed' for a new pair, 200 + outcome 'updated' for an in-place re-file (EP1-file-stock-record)."
+    },
+    {
+      "id": "OD5-refile-audit",
+      "question": "Should an S1 re-file that changes quantity (EP1 'updated') also append a stock_adjustments entry, or does the audit trail cover only explicit adjustments?",
+      "decision_status": "deferred"
+    }
+  ]
+}

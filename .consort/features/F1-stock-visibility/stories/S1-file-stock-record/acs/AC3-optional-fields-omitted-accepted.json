@@ -1,0 +1,14 @@
+{
+  "id": "AC3-optional-fields-omitted-accepted",
+  "given": "the operator is filing a stock record",
+  "when": "they submit it with par level, batch, and serial left blank",
+  "then": "the record is accepted and stored with those fields absent (not tracked), not rejected and not stored as empty strings or zero",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "Produces the null/absent optional-field state that reader stories render as 'not tracked'; AC1 can pass with all fields supplied."
+  },
+  "layer": "API",
+  "architectural_notes": "The service normalizes blank par_level/batch/serial to None before persisting, so the columns are NULL (nullable, PI7/PI8 forbid '' and negatives) for readers to show 'not tracked' (R9). Owner: app/services/stock_records.py; verified by branch-DB API test.",
+  "api_contract_id": "EP1-file-stock-record"
+}

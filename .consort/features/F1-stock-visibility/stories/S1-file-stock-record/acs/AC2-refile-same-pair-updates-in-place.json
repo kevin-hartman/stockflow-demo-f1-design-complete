@@ -1,0 +1,14 @@
+{
+  "id": "AC2-refile-same-pair-updates-in-place",
+  "given": "a stock record already exists for a (sku, location) pair",
+  "when": "the operator files a record for the same (sku, location) again with a new quantity or tracking code",
+  "then": "the existing record is updated in place with the new values, exactly one record for that pair exists, no duplicate is created, and no error page is shown",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "Write-collision path for an existing key, independently breakable from a first-time file."
+  },
+  "layer": "API",
+  "architectural_notes": "Write rule: collision on (sku, location) is resolved at write time by the repository's INSERT ... ON CONFLICT DO UPDATE inside the service transaction (PI1, PI9, R3). Owner: app/services/stock_records.py + app/repositories/stock_records.py; the route maps outcome 'updated' to 200, never an error.",
+  "api_contract_id": "EP1-file-stock-record"
+}

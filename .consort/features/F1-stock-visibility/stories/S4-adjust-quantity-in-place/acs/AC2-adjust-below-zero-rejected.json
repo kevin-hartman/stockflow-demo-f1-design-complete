@@ -1,0 +1,14 @@
+{
+  "id": "AC2-adjust-below-zero-rejected",
+  "given": "a stock record with quantity Q is shown as a row",
+  "when": "the operator submits an adjustment that would leave the quantity below zero",
+  "then": "a clear message naming the quantity field is shown, the stored quantity stays Q, and the row goes back to showing Q (R2)",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "The rejection path: the row must go back to the stored value. AC1 covers only accepted adjustments."
+  },
+  "layer": "API",
+  "architectural_notes": "Write rule (R2): app/services/stock_adjustments.py rejects a new quantity < 0 with a 422 naming 'quantity' before any write, with stock_records CHECK PI6 as defense in depth; the transaction (PI18) leaves stock_records and stock_adjustments unchanged. Verified by a branch-DB API test; the client revert-to-Q is the NFR14 rejection clause.",
+  "api_contract_id": "EP5-adjust-stock-quantity"
+}

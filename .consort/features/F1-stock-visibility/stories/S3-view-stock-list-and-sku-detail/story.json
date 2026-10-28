@@ -1,0 +1,11 @@
+{
+  "id": "S3-view-stock-list-and-sku-detail",
+  "asA": "operator",
+  "iWantTo": "see the home stock list and a SKU detail across all its locations",
+  "soThat": "I see where stock is, with absent fields shown as 'not tracked'",
+  "requires_e2e": true,
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "List and per-SKU multi-location views are distinct reads beyond file and lookup."
+  }
+}

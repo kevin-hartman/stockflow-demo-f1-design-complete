@@ -1,0 +1,18 @@
+{
+  "id": "AC2-scan-to-screen-under-200ms",
+  "given": "a stock record exists with tracking code T on the floor tablet",
+  "when": "the operator scans T",
+  "then": "the matching row appears on screen within about 200ms of the scan",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "Speed of the lookup (R6), which can fail while AC1's correct result still passes."
+  },
+  "layer": "E2E",
+  "ui_seams": [
+    "lookup-input",
+    "lookup-result"
+  ],
+  "api_contract_id": "EP2-lookup-by-tracking-code",
+  "architectural_notes": "Performance contract R6/NFR6: scan (Enter in lookup-input) to lookup-result visible within ~200ms, served by the indexed tracking_code lookup (AP1) with no full page reload. Measured by a Playwright timing assertion against the live API on the paired branch; owner app/services/stock_records.py + app/repositories/stock_records.py."
+}

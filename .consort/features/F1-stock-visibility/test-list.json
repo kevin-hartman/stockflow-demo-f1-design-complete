@@ -1,0 +1,906 @@
+{
+  "feature_id": "F1-stock-visibility",
+  "ordered_for": "design-momentum",
+  "items": [
+    {
+      "id": "T1",
+      "description": "After downgrading the stock_records migration to its own down_revision then upgrade head, stock_records is recreated with all its columns, the uq_stock_records_sku_location unique constraint and the three check constraints present (schema recreated, no data-survival claim) [pytest.mark.migration]",
+      "ac_id": "AC1-file-stock-form",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR1-migration-durability",
+      "invariant_id": "PI10-create-stock-records-reversible",
+      "schema_change_id": "SC1-create-stock-records"
+    },
+    {
+      "id": "T2",
+      "description": "The test session fixture refuses to run unless DATABASE_URL is a postgresql URL (no sqlite or in-memory engine)",
+      "ac_id": "AC1-file-stock-form",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR4-real-branch-tests"
+    },
+    {
+      "id": "T3",
+      "description": "Every /api/* route of the feature, including POST /api/stock-records success and 422 responses, responds with Content-Type application/json, never text/html",
+      "ac_id": "AC1-file-stock-form",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T4",
+      "description": "The alembic upgrade() of the stock_records migration contains only additive operations (create_table, constraints, indexes), no drop_column, drop_table or alter type",
+      "ac_id": "AC1-file-stock-form",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR8-additive-migrations"
+    },
+    {
+      "id": "T5",
+      "description": "The database connection URL is read from the DATABASE_URL environment variable, with no hard-coded connection string in app/ source",
+      "ac_id": "AC1-file-stock-form",
+      "status": "pending",
+      "kind": "fitness"
+    },
+    {
+      "id": "T6",
+      "description": "FileStockForm rendered alone, submitted with a run-unique sku, location, tracking code and quantity against the real API, shows the file-stock-confirmation seam with the 'Filed' label and the submitted sku/location",
+      "ac_id": "AC1-file-stock-form",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/FileStockForm.test.tsx"
+    },
+    {
+      "id": "T7",
+      "description": "FileStockForm rendered alone shows the file-stock-submit button disabled with the is-loading spinner class while the real submit is pending",
+      "ac_id": "AC1-file-stock-form",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/FileStockForm.test.tsx"
+    },
+    {
+      "id": "T8",
+      "description": "Playwright e2e in client/tests/e2e/file-stock.spec.ts navigates the deployed app to /stock/new, fills field-sku (crypto.randomUUID-suffixed sku), field-location, field-tracking-code and field-quantity, clicks file-stock-submit, and the file-stock-confirmation shows the Filed outcome for that sku against the live DB",
+      "ac_id": "AC1-file-stock-form",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/file-stock.spec.ts"
+    },
+    {
+      "id": "T9",
+      "description": "Playwright e2e in client/tests/e2e/file-stock.spec.ts shows the toast-success after submitting a valid record from /stock/new against the live DB",
+      "ac_id": "AC1-file-stock-form",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/file-stock.spec.ts"
+    },
+    {
+      "id": "T10",
+      "description": "Re-filing an existing (sku, location) with a new quantity returns 200 with outcome 'updated' and the record quantity equal to the new value",
+      "ac_id": "AC2-refile-same-pair-updates-in-place",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T11",
+      "description": "Re-filing an existing (sku, location) returns the same record id as the first filing, so exactly one record exists for the pair",
+      "ac_id": "AC2-refile-same-pair-updates-in-place",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T12",
+      "description": "Re-filing an existing (sku, location) with a new tracking code returns the new tracking code on the same record",
+      "ac_id": "AC2-refile-same-pair-updates-in-place",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T13",
+      "description": "Filing the same SKU at two different locations returns 201 outcome 'filed' for both with two distinct record ids, each retaining its own quantity",
+      "ac_id": "AC2-refile-same-pair-updates-in-place",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T14",
+      "description": "Filing two different SKUs at the same location returns 201 for both with two distinct record ids",
+      "ac_id": "AC2-refile-same-pair-updates-in-place",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T15",
+      "description": "Re-filing an existing (sku, location) via POST /api/stock-records returns 200 with outcome 'updated' and exactly one stock_records row exists for that pair holding the new values",
+      "ac_id": "AC2-refile-same-pair-updates-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR3-sku-location-unique"
+    },
+    {
+      "id": "T16",
+      "description": "A direct SQL INSERT of a duplicate (sku, location) into stock_records on the branch database is rejected by uq_stock_records_sku_location",
+      "ac_id": "AC2-refile-same-pair-updates-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR3-sku-location-unique",
+      "invariant_id": "PI1-sku-location-unique"
+    },
+    {
+      "id": "T17",
+      "description": "Filing the same (sku, location) twice through the upsert path leaves exactly one row in stock_records for that pair, updated in place by a single INSERT ... ON CONFLICT DO UPDATE",
+      "ac_id": "AC2-refile-same-pair-updates-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI9-upsert-atomic"
+    },
+    {
+      "id": "T18",
+      "description": "Re-filing an existing (sku, location) preserves the row's id and created_at while updated_at advances",
+      "ac_id": "AC2-refile-same-pair-updates-in-place",
+      "status": "pending",
+      "kind": "fitness"
+    },
+    {
+      "id": "T19",
+      "description": "Filing with par level, batch and serial omitted returns 201 with par_level, batch and serial all null",
+      "ac_id": "AC3-optional-fields-omitted-accepted",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T20",
+      "description": "Filing with blank-string batch and serial returns the record with batch and serial null, not empty strings",
+      "ac_id": "AC3-optional-fields-omitted-accepted",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T21",
+      "description": "Filing with par level omitted returns par_level null, not zero",
+      "ac_id": "AC3-optional-fields-omitted-accepted",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T22",
+      "description": "Filing with par_level, batch and serial blank stores NULL in each of the three columns, read back directly from the branch database (parametrised per column; not '' and not 0)",
+      "ac_id": "AC3-optional-fields-omitted-accepted",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR9-optional-detail-absent"
+    },
+    {
+      "id": "T23",
+      "description": "A direct SQL INSERT into stock_records with a negative par_level is rejected by ck_stock_records_par_level_non_negative on the branch database, while a NULL par_level is accepted",
+      "ac_id": "AC3-optional-fields-omitted-accepted",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI7-par-level-non-negative"
+    },
+    {
+      "id": "T24",
+      "description": "A direct SQL INSERT into stock_records with batch set to the empty string is rejected by ck_stock_records_optional_text_not_blank on the branch database",
+      "ac_id": "AC3-optional-fields-omitted-accepted",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI8-optional-text-not-blank"
+    },
+    {
+      "id": "T25",
+      "description": "POST /api/stock-records with a required field missing returns 422 whose errors[] names exactly that missing field (parametrised over sku, location, tracking_code, quantity)",
+      "ac_id": "AC4-missing-required-field-named",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR7-field-named-validation"
+    },
+    {
+      "id": "T26",
+      "description": "A direct SQL INSERT into stock_records with sku NULL is rejected by the NOT NULL constraint on the branch database",
+      "ac_id": "AC4-missing-required-field-named",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI2-sku-not-null"
+    },
+    {
+      "id": "T27",
+      "description": "A direct SQL INSERT into stock_records with location NULL is rejected by the NOT NULL constraint on the branch database",
+      "ac_id": "AC4-missing-required-field-named",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI3-location-not-null"
+    },
+    {
+      "id": "T28",
+      "description": "A direct SQL INSERT into stock_records with tracking_code NULL is rejected by the NOT NULL constraint on the branch database",
+      "ac_id": "AC4-missing-required-field-named",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI4-tracking-code-not-null"
+    },
+    {
+      "id": "T29",
+      "description": "A direct SQL INSERT into stock_records with quantity NULL is rejected by the NOT NULL constraint on the branch database",
+      "ac_id": "AC4-missing-required-field-named",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI5-quantity-not-null"
+    },
+    {
+      "id": "T30",
+      "description": "FileStockForm rendered alone, submitted with the SKU blank against the real API, renders the server's message naming sku inside the field-error-sku seam with the field--error class",
+      "ac_id": "AC4-missing-required-field-named",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/FileStockForm.test.tsx",
+      "nfr_id": "NFR7-field-named-validation"
+    },
+    {
+      "id": "T31",
+      "description": "FileStockForm rendered alone, submitted with required fields missing against the real API, renders the alert-error summary seam",
+      "ac_id": "AC4-missing-required-field-named",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/FileStockForm.test.tsx"
+    },
+    {
+      "id": "T32",
+      "description": "Playwright e2e in client/tests/e2e/file-stock-missing-field.spec.ts submits /stock/new with the SKU blank and field-error-sku names the missing sku field in the live app",
+      "ac_id": "AC4-missing-required-field-named",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/file-stock-missing-field.spec.ts"
+    },
+    {
+      "id": "T33",
+      "description": "Playwright e2e in client/tests/e2e/file-stock-missing-field.spec.ts submits /stock/new with the tracking code blank and field-error-tracking-code names that field while the alert-error summary is visible",
+      "ac_id": "AC4-missing-required-field-named",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/file-stock-missing-field.spec.ts"
+    },
+    {
+      "id": "T34",
+      "description": "Playwright e2e in client/tests/e2e/file-stock-missing-field.spec.ts submits /stock/new with a missing required field and no file-stock-confirmation appears, so the record is not created, using a crypto.randomUUID-suffixed sku",
+      "ac_id": "AC4-missing-required-field-named",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/file-stock-missing-field.spec.ts"
+    },
+    {
+      "id": "T35",
+      "description": "Filing with a negative quantity returns 422 with an error naming the quantity field",
+      "ac_id": "AC5-negative-quantity-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T36",
+      "description": "Filing with quantity zero is accepted with 201 and stores quantity 0",
+      "ac_id": "AC5-negative-quantity-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T37",
+      "description": "Filing with the quantity field omitted returns 422 with an error naming the quantity field",
+      "ac_id": "AC5-negative-quantity-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T38",
+      "description": "Filing with the SKU omitted returns 422 with an error naming the sku field",
+      "ac_id": "AC5-negative-quantity-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T39",
+      "description": "POST /api/stock-records with quantity -1 returns 422 whose errors[] names 'quantity' and the test's own (sku, location) row count in stock_records is unchanged",
+      "ac_id": "AC5-negative-quantity-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR2-non-negative-stock"
+    },
+    {
+      "id": "T40",
+      "description": "The stock_records service called with its injected session and a negative quantity raises a quantity validation error without the repository upsert write ever being reached (patched repository write asserted not called)",
+      "ac_id": "AC5-negative-quantity-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR2-non-negative-stock"
+    },
+    {
+      "id": "T41",
+      "description": "A direct SQL INSERT of a negative quantity into stock_records on the branch database is rejected by ck_stock_records_quantity_non_negative",
+      "ac_id": "AC5-negative-quantity-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR2-non-negative-stock",
+      "invariant_id": "PI6-quantity-non-negative"
+    },
+    {
+      "id": "T48",
+      "description": "The upgrade() of the S2 index migration contains only additive operations (create_index), with no drop_column, drop_table or alter type",
+      "ac_id": "AC2-scan-to-screen-under-200ms",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR8-additive-migrations",
+      "schema_change_id": "SC2-add-tracking-code-index"
+    },
+    {
+      "id": "T49",
+      "description": "Downgrading to the S2 index migration's own down_revision then upgrade head recreates ix_stock_records_tracking_code_updated_at on (tracking_code, updated_at) as a non-unique index on stock_records (@pytest.mark.migration, schema recreated)",
+      "ac_id": "AC2-scan-to-screen-under-200ms",
+      "status": "pending",
+      "kind": "fitness",
+      "schema_change_id": "SC2-add-tracking-code-index"
+    },
+    {
+      "id": "T43",
+      "description": "Rows seeded with a per-run-unique key in stock_records before the S2 index migration is downgraded to its down_revision then upgraded to head persist with their original values",
+      "ac_id": "AC1-lookup-shows-matching-record",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR1-migration-durability",
+      "schema_change_id": "SC2-add-tracking-code-index"
+    },
+    {
+      "id": "T42",
+      "description": "GET /api/stock-records/lookup for a seeded tracking code returns 200 with Content-Type application/json, never text/html",
+      "ac_id": "AC1-lookup-shows-matching-record",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T47",
+      "description": "GET /api/stock-records/lookup?code=<per-run-unique code> for a seeded record, measured in steady state against the paired Lakebase branch: issue warm-up requests first (discarded, absorbing serverless cold-connection cost), then take the median of several timed requests and assert the median responds within a threshold with headroom over the environment baseline (200ms target plus allowance for remote round-trip)",
+      "ac_id": "AC2-scan-to-screen-under-200ms",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR6-scan-latency"
+    },
+    {
+      "id": "T51",
+      "description": "GET /api/stock-records/lookup for an unknown tracking code returns 404 with Content-Type application/json, never an HTML error page",
+      "ac_id": "AC3-unknown-code-shows-not-found",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T44",
+      "description": "Rendering the tracking-code lookup component and submitting the tracking code of a record filed with a per-run-unique sku/code shows lookup-result with lookup-result-sku, lookup-result-location, lookup-result-tracking-code and lookup-result-quantity matching the record, inside the card seam",
+      "ac_id": "AC1-lookup-shows-matching-record",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/LookupPanel.test.tsx"
+    },
+    {
+      "id": "T52",
+      "description": "Rendering the lookup component and submitting a tracking code no record has shows the lookup-not-found empty-state seam reading 'No record found for' that code, with role status and no error alert",
+      "ac_id": "AC3-unknown-code-shows-not-found",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/LookupPanel.test.tsx"
+    },
+    {
+      "id": "T54",
+      "description": "Rendering the lookup component for a record filed with par level, batch and serial absent shows 'not tracked' in lookup-result-par-level, lookup-result-batch and lookup-result-serial, never blank",
+      "ac_id": "AC4-found-record-shows-not-tracked",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/LookupPanel.test.tsx",
+      "nfr_id": "NFR10-lookup-not-tracked-render"
+    },
+    {
+      "id": "T45",
+      "description": "Playwright e2e (client/tests/e2e/lookup-by-tracking-code.spec.ts) against the deployed app and live DB: file a record with a randomUUID-suffixed tracking code at /stock/new, navigate to route /, type the code into lookup-input and click lookup-submit, and lookup-result shows its SKU, location, tracking code and quantity in lookup-result-sku/-location/-tracking-code/-quantity",
+      "ac_id": "AC1-lookup-shows-matching-record",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/lookup-by-tracking-code.spec.ts"
+    },
+    {
+      "id": "T46",
+      "description": "Playwright e2e (client/tests/e2e/lookup-deep-link.spec.ts): opening route /?code=<randomUUID-suffixed filed code> in the real app prefills lookup-input and shows the matching lookup-result without a full page reload",
+      "ac_id": "AC1-lookup-shows-matching-record",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/lookup-deep-link.spec.ts"
+    },
+    {
+      "id": "T53",
+      "description": "Playwright e2e (client/tests/e2e/lookup-not-found.spec.ts) against live DB: submitting a never-filed randomUUID-suffixed code U in lookup-input at route / shows lookup-not-found reading 'No record found for U' with no error page",
+      "ac_id": "AC3-unknown-code-shows-not-found",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/lookup-not-found.spec.ts"
+    },
+    {
+      "id": "T55",
+      "description": "Playwright e2e (client/tests/e2e/lookup-not-tracked.spec.ts) against live DB: file a record via /stock/new with par level, batch and serial blank under a randomUUID-suffixed code, look it up at route /, and lookup-result-par-level, lookup-result-batch and lookup-result-serial each show 'not tracked'",
+      "ac_id": "AC4-found-record-shows-not-tracked",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/lookup-not-tracked.spec.ts"
+    },
+    {
+      "id": "T50",
+      "description": "Playwright e2e (client/tests/e2e/lookup-latency.spec.ts) against live API: after filing a record with a randomUUID-suffixed code, issue a discarded warm-up lookup first, then take the median of several timed Enter presses in lookup-input at route / and assert lookup-result becomes visible within a threshold with headroom over the environment baseline (200ms target plus remote round-trip allowance), never a single cold hard 200ms bar",
+      "ac_id": "AC2-scan-to-screen-under-200ms",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/lookup-latency.spec.ts"
+    },
+    {
+      "id": "T56",
+      "description": "GET /api/stock-records responds with Content-Type application/json, never text/html, both when rows exist and when the table is empty",
+      "ac_id": "AC1-home-list-shows-every-record",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T57",
+      "description": "The integration test session fixture refuses to run unless DATABASE_URL is a postgresql URL, so the S3 list and SKU-detail reads never run against sqlite or an in-memory engine",
+      "ac_id": "AC1-home-list-shows-every-record",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR4-real-branch-tests"
+    },
+    {
+      "id": "T58",
+      "description": "StockTable rendered against the real EP3 API shows one stock-row-<sku>-<location> row per record with stock-cell-sku, stock-cell-location, stock-cell-tracking-code and stock-cell-quantity text, in the stock-table design-guide class",
+      "ac_id": "AC1-home-list-shows-every-record",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/StockTable.test.tsx"
+    },
+    {
+      "id": "T59",
+      "description": "StockTable rendered against the real EP3 API with one uuid-suffixed SKU filed at two locations shows that SKU in two separate rows, one per location",
+      "ac_id": "AC1-home-list-shows-every-record",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/StockTable.test.tsx"
+    },
+    {
+      "id": "T60",
+      "description": "Playwright e2e against the deployed app and live DB: files a crypto.randomUUID()-suffixed SKU at two locations via /stock/new, navigates to route / and sees one stock-row-<sku>-<location> per (sku, location) under stock-table, each with stock-cell-sku, stock-cell-location, stock-cell-tracking-code and stock-cell-quantity values",
+      "ac_id": "AC1-home-list-shows-every-record",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/stock-list.spec.ts"
+    },
+    {
+      "id": "T61",
+      "description": "GET /api/skus/{sku}/stock-records responds with Content-Type application/json, never text/html, both for a SKU with records and for an unknown SKU",
+      "ac_id": "AC2-sku-detail-shows-all-its-locations",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T62",
+      "description": "SkuDetail rendered for a uuid-suffixed SKU against the real EP4 API shows sku-detail-title and one sku-location-row-<location> per location with quantity and tracking code, and no rows for a distractor SKU",
+      "ac_id": "AC2-sku-detail-shows-all-its-locations",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/SkuDetail.test.tsx"
+    },
+    {
+      "id": "T63",
+      "description": "Playwright e2e against the live DB: with a unique SKU filed at several locations plus a distractor SKU, clicking stock-link-<sku> on route / lands on /skus/:sku where sku-detail-title shows the SKU and sku-locations lists a sku-location-row-<location> with sku-location-quantity and sku-location-tracking-code for every location of that SKU only",
+      "ac_id": "AC2-sku-detail-shows-all-its-locations",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/sku-detail.spec.ts"
+    },
+    {
+      "id": "T64",
+      "description": "StockTable row for a record with NULL par_level, batch and serial renders the text 'not tracked' (not-tracked muted seam) in stock-cell-par-level, stock-cell-batch and stock-cell-serial, never blank (NFR11 clause 1)",
+      "ac_id": "AC3-list-and-detail-show-not-tracked",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/StockTable.test.tsx",
+      "nfr_id": "NFR11-list-detail-not-tracked-render"
+    },
+    {
+      "id": "T65",
+      "description": "SkuDetail sku-locations row for a record with NULL par_level, batch and serial renders 'not tracked' in sku-location-par-level, sku-location-batch and sku-location-serial, never blank (NFR11 clause 2)",
+      "ac_id": "AC3-list-and-detail-show-not-tracked",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/SkuDetail.test.tsx",
+      "nfr_id": "NFR11-list-detail-not-tracked-render"
+    },
+    {
+      "id": "T66",
+      "description": "Playwright e2e against the live DB: a unique SKU filed with par level, batch and serial blank shows the not-tracked text in stock-cell-par-level, stock-cell-batch and stock-cell-serial of its stock-row on route /, never blank",
+      "ac_id": "AC3-list-and-detail-show-not-tracked",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/not-tracked-list.spec.ts"
+    },
+    {
+      "id": "T67",
+      "description": "Playwright e2e against the live DB: opening /skus/:sku for a unique SKU filed with par level, batch and serial blank shows the not-tracked text in sku-location-par-level, sku-location-batch and sku-location-serial, never blank or a crash",
+      "ac_id": "AC3-list-and-detail-show-not-tracked",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/not-tracked-detail.spec.ts"
+    },
+    {
+      "id": "T68",
+      "description": "Stock list rendered against a real EP3 API returning [] shows the stock-empty empty-state ('No stock recorded yet') with a File stock link to /stock/new instead of a blank table or error",
+      "ac_id": "AC4-empty-list-shows-empty-state",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/StockList.test.tsx"
+    },
+    {
+      "id": "T69",
+      "description": "Playwright e2e: drive the empty state by mocking the EP3 response with page.route matched on the API PATHNAME (new URL(url).pathname === '/api/stock-records', never a '**' glob) fulfilling with [] \u2014 no table deletion/DELETE teardown, the shared stock_records table is untouched; navigating to route / shows the stock-empty empty-state (empty-state class, 'No stock recorded yet' heading, File stock CTA to /stock/new) instead of a blank stock-table or an error",
+      "ac_id": "AC4-empty-list-shows-empty-state",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/stock-empty.spec.ts"
+    },
+    {
+      "id": "T70",
+      "description": "An accepted POST /api/stock-records/{id}/adjustments writes exactly one stock_adjustments row carrying the submitted actor, quantity_before equal to the prior stored quantity and quantity_after equal to the new stored quantity (seeded with a per-run-unique sku, delta-scoped to that record)",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T71",
+      "description": "The created_at of an adjustment written by an accepted POST is assigned by the database server clock, within the test's own before/after now() window, not by the client",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T72",
+      "description": "An accepted adjustment updates the stock_records quantity and inserts its stock_adjustments entry in one transaction, so the stored quantity never changes without a matching audit row, verified directly against the branch database",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI18-adjust-atomic"
+    },
+    {
+      "id": "T73",
+      "description": "POST /api/stock-records/{id}/adjustments responds with Content-Type application/json for an accepted, a 422 and a 404 outcome, never text/html",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T74",
+      "description": "In a real browser against the live DB (Playwright e2e), submitting a new quantity in the inline adjust row shows it in stock-cell-quantity before the response arrives, and page.url() is unchanged with no navigation/reload (unique crypto.randomUUID()-suffixed sku)",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/adjust-row-optimistic.spec.ts"
+    },
+    {
+      "id": "T75",
+      "description": "The inline adjust row, once the real API responds, shows the server-returned record.quantity in stock-cell-quantity",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/AdjustRow.test.tsx"
+    },
+    {
+      "id": "T76",
+      "description": "Through the real <App> at route `/` in a browser against the live DB, submitting a new quantity and actor in the row's adjust-row-<sku>-<location> form shows the new value in stock-cell-quantity before the response, with no page reload and no navigation (sku is a crypto.randomUUID()-suffixed key used in the create fill and the locators)",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "client"
+    },
+    {
+      "id": "T77",
+      "description": "Through the real <App> at route `/` in a browser against the live DB, after an adjustment the row's stock-cell-quantity settles on the server-returned quantity, which matches the stored value on re-reading the stock list (unique crypto.randomUUID()-suffixed sku)",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "client"
+    },
+    {
+      "id": "T114",
+      "description": "An accepted POST /api/stock-records/{id}/adjustments returns 200 JSON whose record.quantity equals the newly stored quantity (the server-returned value the row's stock-cell-quantity settles on after the optimistic update)",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR14-optimistic-row-update"
+    },
+    {
+      "id": "T78",
+      "description": "POST /api/stock-records/{id}/adjustments with a negative quantity on a uniquely-keyed seeded record returns 422 whose errors[] names the 'quantity' field",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T79",
+      "description": "After a rejected negative-quantity adjustment, re-reading the record via the API shows the stored quantity is still the original Q",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T80",
+      "description": "After a rejected negative-quantity adjustment, GET /api/stock-records/{id}/adjustments returns an empty list (no audit entry written)",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T81",
+      "description": "POST /api/stock-records/{id}/adjustments with the quantity field omitted returns 422 whose errors[] names the 'quantity' field",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T82",
+      "description": "POST /api/stock-records/{id}/adjustments with quantity exactly 0 (boundary) returns 200 with record.quantity 0 and the stored quantity is 0",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T83",
+      "description": "The adjustment service, called with its required injected session and a negative new quantity, rejects the write naming 'quantity' while the repository write functions (quantity update, adjustment insert) are patched and asserted never called",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR13-adjust-non-negative"
+    },
+    {
+      "id": "T84",
+      "description": "POST /api/stock-records/{id}/adjustments with quantity < 0 returns 422 whose errors[] names 'quantity' and the stored quantity stays Q on the branch database",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR13-adjust-non-negative"
+    },
+    {
+      "id": "T85",
+      "description": "A direct INSERT into stock_adjustments with a negative quantity_before is rejected by the CHECK ck_stock_adjustments_quantities_non_negative",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI16-adjustment-quantities-non-negative"
+    },
+    {
+      "id": "T86",
+      "description": "POST /api/stock-records/{id}/adjustments with quantity < 0 returns 422 with errors[] naming 'quantity', and re-reading the record via the API returns the stored quantity Q (the server state the UI reverts stock-cell-quantity to and shows field-error-quantity from)",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR14-optimistic-row-update"
+    },
+    {
+      "id": "T117",
+      "description": "The inline adjust row, given a real-API 422 for a below-zero quantity, shows field-error-quantity naming quantity and reverts stock-cell-quantity to the stored Q",
+      "ac_id": "AC1-adjust-updates-row-in-place",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/AdjustRow.test.tsx"
+    },
+    {
+      "id": "T115",
+      "description": "A rejected adjustment (negative quantity) leaves stock_records quantity and the stock_adjustments row count for that record unchanged on the branch database (delta-scoped to a per-run-unique sku)",
+      "ac_id": "AC2-adjust-below-zero-rejected",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T87",
+      "description": "The adjustment service, called with its required injected session and a blank or whitespace-only actor, rejects the write naming 'actor' while the repository write functions are patched and asserted never called",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR15-adjustment-queryable-field-named"
+    },
+    {
+      "id": "T88",
+      "description": "POST /api/stock-records/{id}/adjustments with a blank actor returns 422 whose errors[] names 'actor'",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR15-adjustment-queryable-field-named"
+    },
+    {
+      "id": "T89",
+      "description": "A direct INSERT into stock_adjustments with an empty-string actor is rejected by the CHECK ck_stock_adjustments_actor_not_blank",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI15-adjustment-actor-not-blank"
+    },
+    {
+      "id": "T90",
+      "description": "A direct INSERT into stock_adjustments with a NULL actor is rejected by the NOT NULL constraint",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI12-adjustment-actor-not-null"
+    },
+    {
+      "id": "T91",
+      "description": "The inline adjust row submitted with a blank actor shows field-error-actor naming actor, with stock-cell-quantity unchanged",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/AdjustRow.test.tsx"
+    },
+    {
+      "id": "T116",
+      "description": "A rejected adjustment (blank actor) leaves stock_records quantity and the stock_adjustments row count for that record unchanged on the branch database (delta-scoped to a per-run-unique sku)",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T92",
+      "description": "Through the real <App> at route `/` in a browser against the live DB, submitting an adjustment with the actor left blank shows field-error-actor naming the actor field and leaves stock-cell-quantity at the stored value (unique crypto.randomUUID()-suffixed sku)",
+      "ac_id": "AC3-missing-actor-named",
+      "status": "pending",
+      "kind": "client"
+    },
+    {
+      "id": "T93",
+      "description": "GET /api/stock-records/{id}/adjustments returns every seeded adjustment with created_at, actor, quantity_before and quantity_after, ordered by created_at ascending then id",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR15-adjustment-queryable-field-named"
+    },
+    {
+      "id": "T94",
+      "description": "GET /api/stock-records/{id}/adjustments responds with Content-Type application/json for a 200 and a 404 outcome, never text/html",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T95",
+      "description": "With seeded stock_records rows (per-run-unique skus), downgrading to the stock_adjustments migration's own down_revision then upgrade head leaves every seeded stock_records row unchanged and recreates stock_adjustments with its columns, FK, checks and history index (explicit revision id, marked @pytest.mark.migration)",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI19-create-stock-adjustments-additive-reversible",
+      "schema_change_id": "SC3-create-stock-adjustments",
+      "nfr_id": "NFR16-additive-adjustments-migration"
+    },
+    {
+      "id": "T96",
+      "description": "The S4 alembic upgrade() functions contain only additive operations (create_table, create_index, trigger/function creation), no drop_column, drop_table or alter type",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR8-additive-migrations"
+    },
+    {
+      "id": "T97",
+      "description": "A direct INSERT into stock_adjustments referencing a nonexistent stock_record_id is rejected by the foreign key",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI11-adjustment-record-fk"
+    },
+    {
+      "id": "T98",
+      "description": "A direct INSERT into stock_adjustments omitting created_at stores a non-null DB-assigned timestamp from the server DEFAULT now()",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI13-adjustment-timestamp-not-null"
+    },
+    {
+      "id": "T99",
+      "description": "A direct INSERT into stock_adjustments with a NULL quantity_before is rejected by the NOT NULL constraint",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI14-adjustment-quantities-not-null"
+    },
+    {
+      "id": "T100",
+      "description": "The adjustment-history panel for a record with seeded adjustments renders one history-entry-<n> per adjustment in time order, each with history-timestamp, history-actor, history-qty-before, history-qty-after",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/AdjustmentHistory.test.tsx"
+    },
+    {
+      "id": "T101",
+      "description": "The adjustment-history panel for a record with no adjustments renders the history-empty empty-state instead of a blank table",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/AdjustmentHistory.test.tsx"
+    },
+    {
+      "id": "T102",
+      "description": "Through the real <App> at route `/` in a browser against the live DB, opening history-toggle-<sku>-<location> after accepted adjustments shows the adjustment-history panel with one history-entry-<n> per adjustment (unique crypto.randomUUID()-suffixed sku)",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "client"
+    },
+    {
+      "id": "T103",
+      "description": "Through the real <App> at route `/` in a browser against the live DB, each history-entry-<n> shows history-timestamp, history-actor, history-qty-before and history-qty-after in time order matching the adjustments entered (unique crypto.randomUUID()-suffixed sku)",
+      "ac_id": "AC4-adjustment-history-lookup",
+      "status": "pending",
+      "kind": "client"
+    },
+    {
+      "id": "T107",
+      "description": "After a refused DELETE of an adjustment, GET /api/stock-records/{id}/adjustments still lists the entry with its original timestamp, actor and quantity_before/after",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "behavior"
+    },
+    {
+      "id": "T108",
+      "description": "DELETE /api/stock-records/{id}/adjustments/{adjustment_id} returns 405 with a JSON detail, the entry's timestamp, actor and quantities unchanged afterwards",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T109",
+      "description": "PUT /api/stock-records/{id}/adjustments/{adjustment_id} returns 405 with a JSON detail, the entry unchanged afterwards",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T110",
+      "description": "PATCH /api/stock-records/{id}/adjustments/{adjustment_id} returns 405 with a JSON detail, the entry unchanged afterwards",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T111",
+      "description": "The 405 response of the adjustment-mutation path has Content-Type application/json, never text/html",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T112",
+      "description": "A direct UPDATE of an existing stock_adjustments entry's created_at is refused by trigger trg_stock_adjustments_no_update, the row unchanged on re-read",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "fitness",
+      "invariant_id": "PI17-adjustment-no-update",
+      "nfr_id": "NFR12-immutable-adjustment-audit"
+    },
+    {
+      "id": "T113",
+      "description": "The adjustment entry path advertises no mutation: an OPTIONS/Allow check on /api/stock-records/{id}/adjustments/{adjustment_id} lists none of PUT, PATCH, DELETE",
+      "ac_id": "AC5-audit-entries-immutable",
+      "status": "pending",
+      "kind": "behavior",
+      "scenario_file": "tests/features/S4-audit-immutable.feature"
+    }
+  ]
+}

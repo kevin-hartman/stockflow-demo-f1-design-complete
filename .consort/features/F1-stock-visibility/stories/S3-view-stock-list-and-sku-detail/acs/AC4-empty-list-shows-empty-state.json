@@ -1,0 +1,18 @@
+{
+  "id": "AC4-empty-list-shows-empty-state",
+  "given": "no stock records exist",
+  "when": "the operator opens the home stock list",
+  "then": "a clear empty-state message is shown instead of a blank table or an error",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "The no-data state, which AC1-AC3 never exercise because they all need records to exist."
+  },
+  "layer": "E2E",
+  "architectural_notes": "Server-decided empty outcome: EP3 returns [] when stock_records has no rows, and the Stock home renders the stock-empty empty state with the File stock CTA instead of a blank table or error. Verified by Playwright against the live API on the paired branch after cleanup leaves the table empty.",
+  "ui_seams": [
+    "stock-empty",
+    "empty-state"
+  ],
+  "api_contract_id": "EP3-list-stock-records"
+}

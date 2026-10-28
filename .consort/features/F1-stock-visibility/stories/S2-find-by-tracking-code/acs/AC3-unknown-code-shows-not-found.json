@@ -1,0 +1,19 @@
+{
+  "id": "AC3-unknown-code-shows-not-found",
+  "given": "no stock record has tracking code U",
+  "when": "the operator scans or types U and submits",
+  "then": "a clear 'no record found for U' message is shown, with no error page or crash",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "The no-match path; AC1 and AC2 only cover a code that exists."
+  },
+  "layer": "E2E",
+  "ui_seams": [
+    "lookup-input",
+    "lookup-submit",
+    "lookup-not-found"
+  ],
+  "api_contract_id": "EP2-lookup-by-tracking-code",
+  "architectural_notes": "Server-decided not-found outcome: the service returns none, the route maps it to the EP2 404 body, and the client renders the lookup-not-found empty state naming U, never an error page. Verified by Playwright against the live API on the paired branch with no matching row."
+}

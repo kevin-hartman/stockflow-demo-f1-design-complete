@@ -1,0 +1,14 @@
+[
+{"id":"bhv-1","description":"Re-filing an existing (sku, location) with a new quantity returns 200 with outcome 'updated' and the record quantity equal to the new value","ac_id":"AC2-refile-same-pair-updates-in-place","status":"pending","kind":"behavior"},
+{"id":"bhv-2","description":"Re-filing an existing (sku, location) returns the same record id as the first filing, so exactly one record exists for the pair","ac_id":"AC2-refile-same-pair-updates-in-place","status":"pending","kind":"behavior"},
+{"id":"bhv-3","description":"Re-filing an existing (sku, location) with a new tracking code returns the new tracking code on the same record","ac_id":"AC2-refile-same-pair-updates-in-place","status":"pending","kind":"behavior"},
+{"id":"bhv-4","description":"Filing the same SKU at two different locations returns 201 outcome 'filed' for both with two distinct record ids, each retaining its own quantity","ac_id":"AC2-refile-same-pair-updates-in-place","status":"pending","kind":"behavior"},
+{"id":"bhv-5","description":"Filing two different SKUs at the same location returns 201 for both with two distinct record ids","ac_id":"AC2-refile-same-pair-updates-in-place","status":"pending","kind":"behavior"},
+{"id":"bhv-6","description":"Filing with par level, batch and serial omitted returns 201 with par_level, batch and serial all null","ac_id":"AC3-optional-fields-omitted-accepted","status":"pending","kind":"behavior"},
+{"id":"bhv-7","description":"Filing with blank-string batch and serial returns the record with batch and serial null, not empty strings","ac_id":"AC3-optional-fields-omitted-accepted","status":"pending","kind":"behavior"},
+{"id":"bhv-8","description":"Filing with par level omitted returns par_level null, not zero","ac_id":"AC3-optional-fields-omitted-accepted","status":"pending","kind":"behavior"},
+{"id":"bhv-9","description":"Filing with a negative quantity returns 422 with an error naming the quantity field","ac_id":"AC5-negative-quantity-rejected","status":"pending","kind":"behavior"},
+{"id":"bhv-10","description":"Filing with quantity zero is accepted with 201 and stores quantity 0","ac_id":"AC5-negative-quantity-rejected","status":"pending","kind":"behavior"},
+{"id":"bhv-11","description":"Filing with the quantity field omitted returns 422 with an error naming the quantity field","ac_id":"AC5-negative-quantity-rejected","status":"pending","kind":"behavior"},
+{"id":"bhv-12","description":"Filing with the SKU omitted returns 422 with an error naming the sku field","ac_id":"AC5-negative-quantity-rejected","status":"pending","kind":"behavior"}
+]

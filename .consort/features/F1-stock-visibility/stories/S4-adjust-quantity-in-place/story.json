@@ -1,0 +1,11 @@
+{
+  "id": "S4-adjust-quantity-in-place",
+  "asA": "operator",
+  "iWantTo": "adjust a record's quantity and see the row update in place without reload",
+  "soThat": "stock stays accurate with an immutable audit of timestamp and actor",
+  "requires_e2e": true,
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "Quantity adjustment, floor at zero and audit trail are new write behavior beyond filing and reading."
+  }
+}

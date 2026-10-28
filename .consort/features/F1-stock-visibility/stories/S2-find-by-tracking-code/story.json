@@ -1,0 +1,11 @@
+{
+  "id": "S2-find-by-tracking-code",
+  "asA": "operator",
+  "iWantTo": "find a stock record by scanning or typing its tracking code",
+  "soThat": "I reach the row fast (<200ms)",
+  "requires_e2e": true,
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "Lookup by tracking code is a read capability not delivered by filing."
+  }
+}

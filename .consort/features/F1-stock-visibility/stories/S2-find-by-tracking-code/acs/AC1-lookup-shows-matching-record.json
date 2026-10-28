@@ -1,0 +1,19 @@
+{
+  "id": "AC1-lookup-shows-matching-record",
+  "given": "a stock record exists with tracking code T",
+  "when": "the operator scans or types T into the lookup field and submits",
+  "then": "the matching record's row is shown with its SKU, location, tracking code, and quantity",
+  "status": "draft",
+  "layer": "E2E",
+  "ui_seams": [
+    "lookup-input",
+    "lookup-submit",
+    "lookup-result",
+    "lookup-result-sku",
+    "lookup-result-location",
+    "lookup-result-tracking-code",
+    "lookup-result-quantity"
+  ],
+  "api_contract_id": "EP2-lookup-by-tracking-code",
+  "architectural_notes": "Client↔server round-trip: the Stock home scan zone (client/src/pages + hooks/api) calls the app/routes lookup boundary, which delegates to app/services/stock_records.py and the repository's tracking_code query (AP1); the lookup-result card renders the server's record. Verified by Playwright against the live API on the paired branch with a seeded stock_records row."
+}

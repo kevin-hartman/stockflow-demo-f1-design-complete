@@ -1,0 +1,24 @@
+{
+  "id": "AC2-sku-detail-shows-all-its-locations",
+  "given": "SKU X is held at several locations and other SKUs also exist",
+  "when": "the operator opens the detail view for SKU X from the list",
+  "then": "the detail view shows every location record for X with its quantity and tracking code, and no records for other SKUs",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "A per-SKU view grouped across locations, breakable apart from the unfiltered home list (AC1)."
+  },
+  "layer": "E2E",
+  "architectural_notes": "Client↔server read: the stock-link navigates to /skus/:sku, whose page fetches EP4; the service filters by sku via the repository (AP2, served by the PI1 index prefix) so only that SKU's rows render in sku-locations. Verified by Playwright against the live API on the paired branch with other SKUs seeded as distractors.",
+  "ui_seams": [
+    "stock-link-<sku>",
+    "sku-detail",
+    "sku-detail-title",
+    "sku-locations",
+    "sku-location-row-<location>",
+    "sku-location-location",
+    "sku-location-quantity",
+    "sku-location-tracking-code"
+  ],
+  "api_contract_id": "EP4-sku-stock-records"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "AC4-found-record-shows-not-tracked",
+  "given": "a stock record with tracking code T was filed with par level, batch, and serial absent",
+  "when": "the operator looks up T",
+  "then": "the lookup result shows 'not tracked' for par level, batch, and serial, never a blank area or a crash",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "How the lookup result shows absent optional fields (R9), breakable apart from showing a fully populated record (AC1)."
+  },
+  "layer": "E2E",
+  "ui_seams": [
+    "lookup-result",
+    "lookup-result-par-level",
+    "lookup-result-batch",
+    "lookup-result-serial"
+  ],
+  "api_contract_id": "EP2-lookup-by-tracking-code",
+  "architectural_notes": "R9/NFR10: NULL par_level/batch/serial (stored absent by S1 AC3) arrive as null in the EP2 record and the lookup-result presentation renders 'not tracked' for each, never blank. Verified by Playwright against the live API on the paired branch with a seeded row whose optional columns are NULL."
+}

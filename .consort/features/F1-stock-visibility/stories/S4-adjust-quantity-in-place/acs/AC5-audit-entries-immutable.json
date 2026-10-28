@@ -1,0 +1,14 @@
+{
+  "id": "AC5-audit-entries-immutable",
+  "given": "an adjustment history entry exists for a stock record",
+  "when": "any attempt is made to edit or delete that entry",
+  "then": "the attempt is refused, and the entry's timestamp, actor, and quantities stay exactly as recorded",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "The trail can't be changed after recording (R1). AC4 can pass even if entries could still be edited."
+  },
+  "layer": "API",
+  "architectural_notes": "Immutability (R1): no route mutates an audit entry; DELETE/PUT/PATCH on an adjustment return 405 (EP7), the repository is insert-only for stock_adjustments, and a BEFORE UPDATE trigger (PI17) refuses a direct DB UPDATE. Verified by a branch-DB API test plus a direct-UPDATE attempt, then re-reading the entry unchanged.",
+  "api_contract_id": "EP7-refuse-adjustment-mutation"
+}

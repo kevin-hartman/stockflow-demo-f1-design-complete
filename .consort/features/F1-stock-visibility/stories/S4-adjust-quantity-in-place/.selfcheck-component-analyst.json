@@ -1,0 +1,58 @@
+[
+ {
+  "id": "cmp-1",
+  "description": "Rendering the inline adjust row alone against the real API, submitting a new quantity shows it in stock-cell-quantity before the response arrives with no reload",
+  "ac_id": "AC1-adjust-updates-row-in-place",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/AdjustRow.test.tsx"
+ },
+ {
+  "id": "cmp-2",
+  "description": "The inline adjust row, once the real API responds, shows the server-returned record.quantity in stock-cell-quantity",
+  "ac_id": "AC1-adjust-updates-row-in-place",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/AdjustRow.test.tsx"
+ },
+ {
+  "id": "cmp-3",
+  "description": "The inline adjust row given a below-zero quantity shows field-error-quantity naming quantity, reverts stock-cell-quantity to the stored Q",
+  "ac_id": "AC2-adjust-below-zero-rejected",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/AdjustRow.test.tsx"
+ },
+ {
+  "id": "cmp-4",
+  "description": "The inline adjust row submitted with a blank actor shows field-error-actor naming actor, with stock-cell-quantity unchanged",
+  "ac_id": "AC3-missing-actor-named",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/AdjustRow.test.tsx"
+ },
+ {
+  "id": "cmp-5",
+  "description": "The adjustment-history panel for a record with seeded adjustments renders one history-entry-<n> per adjustment in time order, each with history-timestamp, history-actor, history-qty-before, history-qty-after",
+  "ac_id": "AC4-adjustment-history-lookup",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/AdjustmentHistory.test.tsx"
+ },
+ {
+  "id": "cmp-6",
+  "description": "The adjustment-history panel for a record with no adjustments renders the history-empty empty-state instead of a blank table",
+  "ac_id": "AC4-adjustment-history-lookup",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/AdjustmentHistory.test.tsx"
+ },
+ {
+  "id": "cmp-7",
+  "description": "The adjustment-history panel renders each history-entry-<n> read-only with no edit or delete control",
+  "ac_id": "AC5-audit-entries-immutable",
+  "status": "pending",
+  "kind": "component",
+  "scenario_file": "client/tests/components/AdjustmentHistory.test.tsx"
+ }
+]

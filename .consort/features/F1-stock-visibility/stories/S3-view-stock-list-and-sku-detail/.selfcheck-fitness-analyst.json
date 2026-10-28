@@ -1,0 +1,5 @@
+[
+  {"id":"fit-1","description":"GET /api/stock-records responds with Content-Type application/json, never text/html, both when rows exist and when the table is empty","ac_id":"AC1-home-list-shows-every-record","status":"pending","kind":"fitness","nfr_id":"NFR5-spa-json-boundary"},
+  {"id":"fit-2","description":"GET /api/skus/{sku}/stock-records responds with Content-Type application/json, never text/html, both for a SKU with records and for an unknown SKU","ac_id":"AC2-sku-detail-shows-all-its-locations","status":"pending","kind":"fitness","nfr_id":"NFR5-spa-json-boundary"},
+  {"id":"fit-3","description":"The integration test session fixture refuses to run unless DATABASE_URL is a postgresql URL, so the S3 list and SKU-detail reads never run against sqlite or an in-memory engine","ac_id":"AC1-home-list-shows-every-record","status":"pending","kind":"fitness","nfr_id":"NFR4-real-branch-tests"}
+]

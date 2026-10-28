@@ -1,0 +1,119 @@
+{
+  "items": [
+    {
+      "id": "T48",
+      "description": "The upgrade() of the S2 index migration contains only additive operations (create_index), with no drop_column, drop_table or alter type",
+      "ac_id": "AC2-scan-to-screen-under-200ms",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR8-additive-migrations",
+      "schema_change_id": "SC2-add-tracking-code-index"
+    },
+    {
+      "id": "T49",
+      "description": "Downgrading to the S2 index migration's own down_revision then upgrade head recreates ix_stock_records_tracking_code_updated_at on (tracking_code, updated_at) as a non-unique index on stock_records (@pytest.mark.migration, schema recreated)",
+      "ac_id": "AC2-scan-to-screen-under-200ms",
+      "status": "pending",
+      "kind": "fitness",
+      "schema_change_id": "SC2-add-tracking-code-index"
+    },
+    {
+      "id": "T43",
+      "description": "Rows seeded with a per-run-unique key in stock_records before the S2 index migration is downgraded to its down_revision then upgraded to head persist with their original values",
+      "ac_id": "AC1-lookup-shows-matching-record",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR1-migration-durability",
+      "schema_change_id": "SC2-add-tracking-code-index"
+    },
+    {
+      "id": "T42",
+      "description": "GET /api/stock-records/lookup for a seeded tracking code returns 200 with Content-Type application/json, never text/html",
+      "ac_id": "AC1-lookup-shows-matching-record",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T47",
+      "description": "GET /api/stock-records/lookup?code=<per-run-unique code> for a seeded record, measured in steady state against the paired Lakebase branch: issue warm-up requests first (discarded, absorbing serverless cold-connection cost), then take the median of several timed requests and assert the median responds within a threshold with headroom over the environment baseline (200ms target plus allowance for remote round-trip)",
+      "ac_id": "AC2-scan-to-screen-under-200ms",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR6-scan-latency"
+    },
+    {
+      "id": "T51",
+      "description": "GET /api/stock-records/lookup for an unknown tracking code returns 404 with Content-Type application/json, never an HTML error page",
+      "ac_id": "AC3-unknown-code-shows-not-found",
+      "status": "pending",
+      "kind": "fitness",
+      "nfr_id": "NFR5-spa-json-boundary"
+    },
+    {
+      "id": "T44",
+      "description": "Rendering the tracking-code lookup component and submitting the tracking code of a record filed with a per-run-unique sku/code shows lookup-result with lookup-result-sku, lookup-result-location, lookup-result-tracking-code and lookup-result-quantity matching the record, inside the card seam",
+      "ac_id": "AC1-lookup-shows-matching-record",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/LookupPanel.test.tsx"
+    },
+    {
+      "id": "T52",
+      "description": "Rendering the lookup component and submitting a tracking code no record has shows the lookup-not-found empty-state seam reading 'No record found for' that code, with role status and no error alert",
+      "ac_id": "AC3-unknown-code-shows-not-found",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/LookupPanel.test.tsx"
+    },
+    {
+      "id": "T54",
+      "description": "Rendering the lookup component for a record filed with par level, batch and serial absent shows 'not tracked' in lookup-result-par-level, lookup-result-batch and lookup-result-serial, never blank",
+      "ac_id": "AC4-found-record-shows-not-tracked",
+      "status": "pending",
+      "kind": "component",
+      "scenario_file": "client/tests/components/LookupPanel.test.tsx",
+      "nfr_id": "NFR10-lookup-not-tracked-render"
+    },
+    {
+      "id": "T45",
+      "description": "Playwright e2e (client/tests/e2e/lookup-by-tracking-code.spec.ts) against the deployed app and live DB: file a record with a randomUUID-suffixed tracking code at /stock/new, navigate to route /, type the code into lookup-input and click lookup-submit, and lookup-result shows its SKU, location, tracking code and quantity in lookup-result-sku/-location/-tracking-code/-quantity",
+      "ac_id": "AC1-lookup-shows-matching-record",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/lookup-by-tracking-code.spec.ts"
+    },
+    {
+      "id": "T46",
+      "description": "Playwright e2e (client/tests/e2e/lookup-deep-link.spec.ts): opening route /?code=<randomUUID-suffixed filed code> in the real app prefills lookup-input and shows the matching lookup-result without a full page reload",
+      "ac_id": "AC1-lookup-shows-matching-record",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/lookup-deep-link.spec.ts"
+    },
+    {
+      "id": "T53",
+      "description": "Playwright e2e (client/tests/e2e/lookup-not-found.spec.ts) against live DB: submitting a never-filed randomUUID-suffixed code U in lookup-input at route / shows lookup-not-found reading 'No record found for U' with no error page",
+      "ac_id": "AC3-unknown-code-shows-not-found",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/lookup-not-found.spec.ts"
+    },
+    {
+      "id": "T55",
+      "description": "Playwright e2e (client/tests/e2e/lookup-not-tracked.spec.ts) against live DB: file a record via /stock/new with par level, batch and serial blank under a randomUUID-suffixed code, look it up at route /, and lookup-result-par-level, lookup-result-batch and lookup-result-serial each show 'not tracked'",
+      "ac_id": "AC4-found-record-shows-not-tracked",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/lookup-not-tracked.spec.ts"
+    },
+    {
+      "id": "T50",
+      "description": "Playwright e2e (client/tests/e2e/lookup-latency.spec.ts) against live API: after filing a record with a randomUUID-suffixed code, issue a discarded warm-up lookup first, then take the median of several timed Enter presses in lookup-input at route / and assert lookup-result becomes visible within a threshold with headroom over the environment baseline (200ms target plus remote round-trip allowance), never a single cold hard 200ms bar",
+      "ac_id": "AC2-scan-to-screen-under-200ms",
+      "status": "pending",
+      "kind": "client",
+      "scenario_file": "client/tests/e2e/lookup-latency.spec.ts"
+    }
+  ]
+}

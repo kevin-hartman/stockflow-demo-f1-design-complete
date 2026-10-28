@@ -1,0 +1,23 @@
+{
+  "id": "AC3-list-and-detail-show-not-tracked",
+  "given": "a stock record has par level, batch, and serial absent",
+  "when": "the operator views it on the home list and on its SKU detail view",
+  "then": "both views show 'not tracked' for each absent field, never a blank area or a crash (R9)",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "How these views show absent optional fields; AC1 and AC2 can pass with fully populated records."
+  },
+  "layer": "E2E",
+  "architectural_notes": "R9/NFR11 reader side: NULL par_level/batch/serial (stored absent per S1 AC3/NFR9) arrive as null in EP3 and EP4 rows, and the list cells and detail cells both render 'not tracked', never blank. Verified by Playwright against the live API on the paired branch with a seeded row whose optional columns are NULL.",
+  "ui_seams": [
+    "stock-cell-par-level",
+    "stock-cell-batch",
+    "stock-cell-serial",
+    "not-tracked",
+    "sku-location-par-level",
+    "sku-location-batch",
+    "sku-location-serial"
+  ],
+  "api_contract_id": "EP3-list-stock-records"
+}

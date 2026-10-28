@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "feature_id": "F1-stock-visibility",
+  "stories": {
+    "S1-file-stock-record": {
+      "status": "ready",
+      "gate": {
+        "status": "approved",
+        "history": [
+          {
+            "action": "approved",
+            "at": "2026-10-28T07:38:28.945Z",
+            "approver": "Kevin Hartman"
+          }
+        ],
+        "approver": "Kevin Hartman",
+        "approved_at": "2026-10-28T07:38:28.945Z"
+      }
+    },
+    "S2-find-by-tracking-code": {
+      "status": "ready",
+      "acceptance": {
+        "decision": "revise",
+        "history": [
+          {
+            "decision": "revise",
+            "at": "2026-10-28T06:42:20.694Z",
+            "approver": "human-proxy",
+            "reason": "blocking smell \"reflect-ia-defect\": ia conformance: AC AC1-lookup-shows-matching-record drives UI seam(s) the information architecture (ia.md) does not name: lookup-result-location, lookup-result-tracking-code, lookup-result-quantity. Add the surface (and its data-testid seam) to the AC's screen in ia.md, OR — if the capability has no standalone surface — reconsider the AC's layer with the spec-author. The architect declared these seams in the AC's ui_seams; every one must have a home in the IA before the build drives a UI the IA never described.; AC AC4-found-record-shows-not-tracked drives UI seam(s) the information architecture (ia.md) does not name: lookup-result-batch, lookup-result-serial. Add the surface (and its data-testid seam) to the AC's screen in ia.md, OR — if the capability has no standalone surface — reconsider the AC's layer with the spec-author. The architect declared these seams in the AC's ui_seams; every one must have a home in the IA before the build drives a UI the IA never described."
+          },
+          {
+            "decision": "revise",
+            "at": "2026-10-28T06:45:00.344Z",
+            "approver": "human-proxy",
+            "reason": "blocking smell \"reflect-testlist-defect\": reflection gate: T47 (and T50) assert a hard 200ms bar over a full round-trip to a remote serverless Lakebase branch with no warm-up or steady-state framing; cold-connection spikes will make it flaky on a correct app. Re-author as warm/steady-state (issue a warm-up request first, then assert on the timed request, or use a median of several runs) with a threshold that has headroom over the environment baseline."
+          }
+        ],
+        "approver": "human-proxy",
+        "at": "2026-10-28T06:45:00.344Z",
+        "reason": "blocking smell \"reflect-testlist-defect\": reflection gate: T47 (and T50) assert a hard 200ms bar over a full round-trip to a remote serverless Lakebase branch with no warm-up or steady-state framing; cold-connection spikes will make it flaky on a correct app. Re-author as warm/steady-state (issue a warm-up request first, then assert on the timed request, or use a median of several runs) with a threshold that has headroom over the environment baseline."
+      },
+      "gate": {
+        "status": "approved",
+        "history": [
+          {
+            "action": "approved",
+            "at": "2026-10-28T07:38:53.371Z",
+            "approver": "Kevin Hartman"
+          }
+        ],
+        "approver": "Kevin Hartman",
+        "approved_at": "2026-10-28T07:38:53.371Z"
+      }
+    },
+    "S3-view-stock-list-and-sku-detail": {
+      "status": "ready",
+      "acceptance": {
+        "decision": "revise",
+        "history": [
+          {
+            "decision": "revise",
+            "at": "2026-10-28T06:49:04.518Z",
+            "approver": "human-proxy",
+            "reason": "blocking smell \"reflect-testlist-defect\": reflection gate: T69 (and AC4 architectural_notes 'after cleanup leaves the table empty') requires the live shared paired-branch stock_records table to be EMPTY. Sibling stories (S1/S2) and S3's own seeds persist rows there, so the empty-state is unsatisfiable on a correct app, and emptying it needs a DELETE-based teardown (forbidden: append-only/FK RESTRICT, and it wipes sibling seeds). Re-author T69 to drive the empty state by mocking the EP3 response with page.route scoped to the API PATHNAME (new URL(url).pathname === '/api/stock-records') returning [], never a '**' glob and never table deletion."
+          }
+        ],
+        "approver": "human-proxy",
+        "at": "2026-10-28T06:49:04.518Z",
+        "reason": "blocking smell \"reflect-testlist-defect\": reflection gate: T69 (and AC4 architectural_notes 'after cleanup leaves the table empty') requires the live shared paired-branch stock_records table to be EMPTY. Sibling stories (S1/S2) and S3's own seeds persist rows there, so the empty-state is unsatisfiable on a correct app, and emptying it needs a DELETE-based teardown (forbidden: append-only/FK RESTRICT, and it wipes sibling seeds). Re-author T69 to drive the empty state by mocking the EP3 response with page.route scoped to the API PATHNAME (new URL(url).pathname === '/api/stock-records') returning [], never a '**' glob and never table deletion."
+      },
+      "gate": {
+        "status": "approved",
+        "history": [
+          {
+            "action": "approved",
+            "at": "2026-10-28T07:40:59.960Z",
+            "approver": "Kevin Hartman"
+          }
+        ],
+        "approver": "Kevin Hartman",
+        "approved_at": "2026-10-28T07:40:59.960Z"
+      }
+    },
+    "S4-adjust-quantity-in-place": {
+      "status": "ready",
+      "acceptance": {
+        "decision": "revise",
+        "history": [
+          {
+            "decision": "revise",
+            "at": "2026-10-28T06:55:28.443Z",
+            "approver": "human-proxy",
+            "reason": "blocking smell \"reflect-testlist-defect\": test-list conformance: test T86 is kind:\"component\" but anchored to AC2-adjust-below-zero-rejected (layer: API) – a client-side UI test (it renders a component) cannot verify a backend API AC's contract. Cover the clause in a behavior/fitness test at the API boundary (e.g. an API integration assertion on a non-error 2xx response) or re-slice the AC; never tag a client/component test to a backend-layer AC.; test T113 is kind:\"component\" but anchored to AC5-audit-entries-immutable (layer: API) – a client-side UI test (it renders a component) cannot verify a backend API AC's contract. Cover the clause in a behavior/fitness test at the API boundary (e.g. an API integration assertion on a non-error 2xx response) or re-slice the AC; never tag a client/component test to a backend-layer AC.; test item T74 asserts a REAL-BROWSER navigation property (\"Rendering the inline adjust row alone against the real API, submitting a new quantity show…\") but its scenario_file is the jsdom/Vitest component harness (client/tests/components/AdjustRow.test.tsx), where reloads/navigation never occur — so the assertion is vacuous and cannot turn RED on a broken app. Author it as a Playwright e2e spec (scenario_file under client/tests/e2e/…spec.ts) and assert navigation state via page.url() / rendered content in a real browser; NFR NFR14-optimistic-row-update declares a singular fitness_function but NO test-list item references it via nfr_id – author one fitness test tagged nfr_id:\"NFR14-optimistic-row-update\" (the array form is clause-gated; the singular form was escaping to the reflect until this check); NFR NFR16-additive-adjustments-migration declares a singular fitness_function but NO test-list item references it via nfr_id – author one fitness test tagged nfr_id:\"NFR16-additive-adjustments-migration\" (the array form is clause-gated; the singular form was escaping to the reflect until this check); NFR NFR12-immutable-adjustment-audit clause \"a rejected adjustment (negative quantity or blank actor) leaves stock_records and stock_adjustments unchanged\" is realized by AC(s) AC2-adjust-below-zero-rejected, AC3-missing-actor-named present in this test-list but no fitness item tagged nfr_id:\"NFR12-immutable-adjustment-audit\" anchors to a realizing AC — author one for it (a bare nfr_id tag on an unrelated AC does not count); NFR NFR14-optimistic-row-update clause \"submitting an adjustment shows the new value in the row's stock-cell-quantity before the response with no navigation/reload, then shows the server-returned record.quantity\" is realized by AC(s) AC1-adjust-updates-row-in-place present in this test-list but no fitness item tagged nfr_id:\"NFR14-optimistic-row-update\" anchors to a realizing AC — author one for it (a bare nfr_id tag on an unrelated AC does not count); NFR NFR14-optimistic-row-update clause \"a 422 rejection reverts the row's stock-cell-quantity to the stored Q and shows field-error-quantity\" is realized by AC(s) AC2-adjust-below-zero-rejected present in this test-list but no fitness item tagged nfr_id:\"NFR14-optimistic-row-update\" anchors to a realizing AC — author one for it (a bare nfr_id tag on an unrelated AC does not count); NFR NFR16-additive-adjustments-migration clause \"with seeded stock_records rows, downgrading the stock_adjustments migration to its down_revision then upgrading head leaves every stock_records row unchanged and recreates stock_adjustments\" is realized by AC(s) AC4-adjustment-history-lookup present in this test-list but no fitness item tagged nfr_id:\"NFR16-additive-adjustments-migration\" anchors to a realizing AC — author one for it (a bare nfr_id tag on an unrelated AC does not count)"
+          },
+          {
+            "decision": "revise",
+            "at": "2026-10-28T06:56:21.136Z",
+            "approver": "human-proxy",
+            "reason": "blocking smell \"reflect-testlist-defect\": reflection gate: AC2 'then' asserts UI outcomes (message naming quantity shown as field-error-quantity, row reverts to Q) but every AC2 test is API/DB-level (T78-T86, T115). No component or client test covers field-error-quantity or the stock-cell-quantity revert to Q after a rejected optimistic update (the NFR14 rejection clause; T86 only checks server state). Add a component test (AdjustRow.test.tsx) for the below-zero reject -> field-error-quantity + revert."
+          }
+        ],
+        "approver": "human-proxy",
+        "at": "2026-10-28T06:56:21.136Z",
+        "reason": "blocking smell \"reflect-testlist-defect\": reflection gate: AC2 'then' asserts UI outcomes (message naming quantity shown as field-error-quantity, row reverts to Q) but every AC2 test is API/DB-level (T78-T86, T115). No component or client test covers field-error-quantity or the stock-cell-quantity revert to Q after a rejected optimistic update (the NFR14 rejection clause; T86 only checks server state). Add a component test (AdjustRow.test.tsx) for the below-zero reject -> field-error-quantity + revert."
+      },
+      "gate": {
+        "status": "approved",
+        "history": [
+          {
+            "action": "approved",
+            "at": "2026-10-28T07:41:19.780Z",
+            "approver": "Kevin Hartman"
+          }
+        ],
+        "approver": "Kevin Hartman",
+        "approved_at": "2026-10-28T07:41:19.780Z"
+      }
+    }
+  },
+  "build_queue": [
+    "S1-file-stock-record",
+    "S2-find-by-tracking-code",
+    "S3-view-stock-list-and-sku-detail",
+    "S4-adjust-quantity-in-place"
+  ],
+  "build_active": null
+}

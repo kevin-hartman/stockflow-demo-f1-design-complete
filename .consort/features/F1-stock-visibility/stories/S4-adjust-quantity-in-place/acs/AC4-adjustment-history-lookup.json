@@ -1,0 +1,23 @@
+{
+  "id": "AC4-adjustment-history-lookup",
+  "given": "a stock record has had one or more accepted adjustments",
+  "when": "the operator opens that record's adjustment history",
+  "then": "each adjustment is listed with its timestamp, the actor entered, and the quantity before and after, in time order (R1, R7)",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "Records each adjustment and lets the operator look it up. AC1 can pass without any audit trail."
+  },
+  "layer": "E2E",
+  "architectural_notes": "Client↔server read (R1, R7): the history toggle fetches EP6 from app/routes, which delegates to app/services/stock_adjustments.py and the repository query by stock_record_id ordered by created_at, id (AP3); the adjustment-history panel renders each entry's server timestamp, actor and quantity before/after. Verified by Playwright against the live API on the paired branch after seeded adjustments.",
+  "ui_seams": [
+    "history-toggle-<sku>-<location>",
+    "adjustment-history",
+    "history-entry-<n>",
+    "history-timestamp",
+    "history-actor",
+    "history-qty-before",
+    "history-qty-after"
+  ],
+  "api_contract_id": "EP6-list-stock-adjustments"
+}

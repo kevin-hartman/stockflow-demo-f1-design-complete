@@ -1,0 +1,20 @@
+{
+  "id": "AC3-missing-actor-named",
+  "given": "a stock record is shown as a row",
+  "when": "the operator submits an adjustment with the actor field left blank",
+  "then": "a clear message naming the actor field is shown and the quantity is not changed",
+  "status": "draft",
+  "independence": {
+    "distinct_from_prior": true,
+    "rationale": "Actor is a required input with no login. Rejecting a blank actor is breakable apart from the quantity rules."
+  },
+  "layer": "E2E",
+  "architectural_notes": "Server-decided rejection rendered inline: the actor is an operator-typed form field (no auth in V1); the service rejects a blank/whitespace actor with a 422 naming 'actor' (PI15 as DB backstop) and the client maps it to field-error-actor and keeps the stored quantity. Owner app/services/stock_adjustments.py; verified by Playwright against the live API plus a no-change check on both tables.",
+  "ui_seams": [
+    "adjust-actor-<sku>-<location>",
+    "adjust-submit-<sku>-<location>",
+    "field-error-actor",
+    "stock-cell-quantity"
+  ],
+  "api_contract_id": "EP5-adjust-stock-quantity"
+}
