@@ -1,0 +1,19 @@
+{
+  "estimates": [
+    {
+      "feature_id": "F1-stock-visibility",
+      "size": "L",
+      "rationale": "Foundation: new schema + audit trail, file/lookup/list/detail/adjust flows, SPA optimistic updates, scan latency budget, and multiple E2E stories."
+    },
+    {
+      "feature_id": "F2-inbound-receipts",
+      "size": "M",
+      "rationale": "One receipt form + additive migration and upsert-increment on the existing (sku, location) record; supplier list vs free-text may widen scope."
+    },
+    {
+      "feature_id": "F3-outbound-picks",
+      "size": "M",
+      "rationale": "Pick form + additive migration with a transactional no-negative/no-overcommit guard and refusal E2E; order entity would push toward L."
+    }
+  ]
+}

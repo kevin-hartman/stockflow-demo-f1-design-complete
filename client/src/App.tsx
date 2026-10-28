@@ -13,8 +13,8 @@ export function App() {
     <>
       <nav className="navbar">
         <span className="navbar__brand">
-          <img className="navbar__icon" src="/favicon.svg" alt="" />
-          stockflow-demo
+          <img className="navbar__icon" src="/warehouse.png" alt="" />
+          StockFlow
         </span>
         <span className="navbar__links">
           <NavLink

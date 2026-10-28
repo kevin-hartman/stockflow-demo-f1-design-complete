@@ -1,0 +1,24 @@
+{
+  "sprint": "v1",
+  "schema_version": 1,
+  "gates": {
+    "plan": {
+      "status": "approved",
+      "approver": "Kevin Hartman",
+      "approved_at": "2026-10-28T06:32:02.661Z",
+      "artifact_hashes": {
+        "feature-proposals.md": "e27411d7b97d9aa0f71fd05e0df82f2141d9a4cde7f662638d222ad0bf3ebcf7"
+      },
+      "history": [
+        {
+          "action": "approved",
+          "at": "2026-10-28T06:32:02.661Z",
+          "approver": "Kevin Hartman",
+          "artifact_hashes": {
+            "feature-proposals.md": "e27411d7b97d9aa0f71fd05e0df82f2141d9a4cde7f662638d222ad0bf3ebcf7"
+          }
+        }
+      ]
+    }
+  }
+}
