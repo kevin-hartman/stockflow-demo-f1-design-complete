@@ -1,0 +1,28 @@
+{
+  "ordinal": 24,
+  "step": 0,
+  "label": "test-strategist",
+  "kind": "invoke-role",
+  "role": "test-strategist",
+  "story": "S2-find-by-tracking-code",
+  "action": {
+    "kind": "invoke-role",
+    "role": "test-strategist",
+    "story": "S2-find-by-tracking-code"
+  },
+  "produced": [
+    ".consort/agent-live.log",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/analyst-ordered.json",
+    ".consort/features/F1-stock-visibility/test-list.json"
+  ],
+  "deleted": [
+    ".consort/features/F1-stock-visibility/.handback/test-strategist.S2-find-by-tracking-code.md"
+  ],
+  "snapshotted": false,
+  "transcript": {
+    "role": "test-strategist",
+    "model": "sonnet",
+    "toolCount": 1,
+    "finalTextChars": 884
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "ordinal": 23,
+  "step": 0,
+  "label": "revise-route",
+  "kind": "revise-route",
+  "role": "test-strategist",
+  "story": "S2-find-by-tracking-code",
+  "action": {
+    "kind": "revise-route",
+    "story": "S2-find-by-tracking-code",
+    "role": "test-strategist",
+    "gate": "test_list",
+    "reason": "blocking smell \"reflect-testlist-defect\": reflection gate: T47 (and T50) assert a hard 200ms bar over a full round-trip to a remote serverless Lakebase branch with no warm-up or steady-state framing; cold-connection spikes will make it flaky on a correct app. Re-author as warm/steady-state (issue a warm-up request first, then assert on the timed request, or use a median of several runs) with a threshold that has headroom over the environment baseline.",
+    "source": "smell:reflect-testlist-defect"
+  },
+  "produced": [
+    ".consort/features/F1-stock-visibility/.handback/test-strategist.S2-find-by-tracking-code.md",
+    ".consort/features/F1-stock-visibility/pipeline.json",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/test-list-patch.json",
+    ".consort/features/F1-stock-visibility/test-list.json",
+    ".consort/smells.json"
+  ],
+  "deleted": [
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/reflect-verdict.json",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/test-list-per-story.json"
+  ],
+  "snapshotted": false
+}

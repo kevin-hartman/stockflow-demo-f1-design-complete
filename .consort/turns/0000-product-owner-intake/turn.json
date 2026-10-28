@@ -1,0 +1,27 @@
+{
+  "ordinal": 0,
+  "step": 0,
+  "label": "product-owner-intake",
+  "kind": "invoke-role",
+  "role": "product-owner",
+  "mode": "intake",
+  "action": {
+    "kind": "invoke-role",
+    "role": "product-owner",
+    "mode": "intake"
+  },
+  "produced": [
+    ".consort/agent-live.log",
+    ".consort/design/design-brief.md",
+    ".consort/nfrs.md",
+    ".consort/product-overview.md"
+  ],
+  "deleted": [],
+  "snapshotted": false,
+  "transcript": {
+    "role": "product-owner",
+    "model": "opus",
+    "toolCount": 5,
+    "finalTextChars": 601
+  }
+}

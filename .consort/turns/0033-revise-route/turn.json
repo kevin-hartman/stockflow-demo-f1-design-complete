@@ -1,0 +1,28 @@
+{
+  "ordinal": 33,
+  "step": 0,
+  "label": "revise-route",
+  "kind": "revise-route",
+  "role": "test-strategist",
+  "story": "S3-view-stock-list-and-sku-detail",
+  "action": {
+    "kind": "revise-route",
+    "story": "S3-view-stock-list-and-sku-detail",
+    "role": "test-strategist",
+    "gate": "test_list",
+    "reason": "blocking smell \"reflect-testlist-defect\": reflection gate: T69 (and AC4 architectural_notes 'after cleanup leaves the table empty') requires the live shared paired-branch stock_records table to be EMPTY. Sibling stories (S1/S2) and S3's own seeds persist rows there, so the empty-state is unsatisfiable on a correct app, and emptying it needs a DELETE-based teardown (forbidden: append-only/FK RESTRICT, and it wipes sibling seeds). Re-author T69 to drive the empty state by mocking the EP3 response with page.route scoped to the API PATHNAME (new URL(url).pathname === '/api/stock-records') returning [], never a '**' glob and never table deletion.",
+    "source": "smell:reflect-testlist-defect"
+  },
+  "produced": [
+    ".consort/features/F1-stock-visibility/.handback/test-strategist.S3-view-stock-list-and-sku-detail.md",
+    ".consort/features/F1-stock-visibility/pipeline.json",
+    ".consort/features/F1-stock-visibility/stories/S3-view-stock-list-and-sku-detail/test-list-patch.json",
+    ".consort/features/F1-stock-visibility/test-list.json",
+    ".consort/smells.json"
+  ],
+  "deleted": [
+    ".consort/features/F1-stock-visibility/stories/S3-view-stock-list-and-sku-detail/reflect-verdict.json",
+    ".consort/features/F1-stock-visibility/stories/S3-view-stock-list-and-sku-detail/test-list-per-story.json"
+  ],
+  "snapshotted": false
+}

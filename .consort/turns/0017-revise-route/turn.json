@@ -1,0 +1,31 @@
+{
+  "ordinal": 17,
+  "step": 0,
+  "label": "revise-route",
+  "kind": "revise-route",
+  "role": "ux-designer",
+  "story": "S2-find-by-tracking-code",
+  "action": {
+    "kind": "revise-route",
+    "story": "S2-find-by-tracking-code",
+    "role": "ux-designer",
+    "gate": "ia",
+    "reason": "blocking smell \"reflect-ia-defect\": ia conformance: AC AC1-lookup-shows-matching-record drives UI seam(s) the information architecture (ia.md) does not name: lookup-result-location, lookup-result-tracking-code, lookup-result-quantity. Add the surface (and its data-testid seam) to the AC's screen in ia.md, OR — if the capability has no standalone surface — reconsider the AC's layer with the spec-author. The architect declared these seams in the AC's ui_seams; every one must have a home in the IA before the build drives a UI the IA never described.; AC AC4-found-record-shows-not-tracked drives UI seam(s) the information architecture (ia.md) does not name: lookup-result-batch, lookup-result-serial. Add the surface (and its data-testid seam) to the AC's screen in ia.md, OR — if the capability has no standalone surface — reconsider the AC's layer with the spec-author. The architect declared these seams in the AC's ui_seams; every one must have a home in the IA before the build drives a UI the IA never described.",
+    "source": "smell:reflect-ia-defect"
+  },
+  "produced": [
+    ".consort/features/F1-stock-visibility/.handback/architect-reviewer.S2-find-by-tracking-code.md",
+    ".consort/features/F1-stock-visibility/.handback/ux-designer.S2-find-by-tracking-code.md",
+    ".consort/features/F1-stock-visibility/pipeline.json",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC1-lookup-shows-matching-record.json",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC2-scan-to-screen-under-200ms.json",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC3-unknown-code-shows-not-found.json",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC4-found-record-shows-not-tracked.json",
+    ".consort/features/F1-stock-visibility/test-list.json",
+    ".consort/smells.json"
+  ],
+  "deleted": [
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/ia-coverage.json"
+  ],
+  "snapshotted": false
+}

@@ -1,0 +1,25 @@
+{
+  "ordinal": 3,
+  "step": 0,
+  "label": "architect-reviewer-estimate",
+  "kind": "invoke-role",
+  "role": "architect-reviewer",
+  "mode": "estimate",
+  "action": {
+    "kind": "invoke-role",
+    "role": "architect-reviewer",
+    "mode": "estimate"
+  },
+  "produced": [
+    ".consort/agent-live.log",
+    ".consort/planning/estimates.json"
+  ],
+  "deleted": [],
+  "snapshotted": false,
+  "transcript": {
+    "role": "architect-reviewer",
+    "model": "opus",
+    "toolCount": 3,
+    "finalTextChars": 122
+  }
+}

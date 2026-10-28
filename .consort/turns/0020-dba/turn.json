@@ -1,0 +1,26 @@
+{
+  "ordinal": 20,
+  "step": 0,
+  "label": "dba",
+  "kind": "invoke-role",
+  "role": "dba",
+  "story": "S2-find-by-tracking-code",
+  "action": {
+    "kind": "invoke-role",
+    "role": "dba",
+    "story": "S2-find-by-tracking-code"
+  },
+  "produced": [
+    ".consort/agent-live.log",
+    ".consort/features/F1-stock-visibility/db-design.json",
+    ".consort/features/F1-stock-visibility/db-design.md"
+  ],
+  "deleted": [],
+  "snapshotted": false,
+  "transcript": {
+    "role": "dba",
+    "model": "opus",
+    "toolCount": 1,
+    "finalTextChars": 416
+  }
+}

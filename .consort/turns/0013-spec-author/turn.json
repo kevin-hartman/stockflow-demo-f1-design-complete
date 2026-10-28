@@ -1,0 +1,33 @@
+{
+  "ordinal": 13,
+  "step": 0,
+  "label": "spec-author",
+  "kind": "invoke-role",
+  "role": "spec-author",
+  "story": "S2-find-by-tracking-code",
+  "action": {
+    "kind": "invoke-role",
+    "role": "spec-author",
+    "story": "S2-find-by-tracking-code"
+  },
+  "produced": [
+    ".consort/agent-live.log",
+    ".consort/features/F1-stock-visibility/feature-spec.md",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC1-lookup-shows-matching-record.json",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC1-lookup-shows-matching-record.md",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC2-scan-to-screen-under-200ms.json",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC2-scan-to-screen-under-200ms.md",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC3-unknown-code-shows-not-found.json",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC3-unknown-code-shows-not-found.md",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC4-found-record-shows-not-tracked.json",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/acs/AC4-found-record-shows-not-tracked.md"
+  ],
+  "deleted": [],
+  "snapshotted": false,
+  "transcript": {
+    "role": "spec-author",
+    "model": "opus",
+    "toolCount": 1,
+    "finalTextChars": 1137
+  }
+}

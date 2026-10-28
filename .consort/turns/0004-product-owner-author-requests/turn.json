@@ -1,0 +1,29 @@
+{
+  "ordinal": 4,
+  "step": 0,
+  "label": "product-owner-author-requests",
+  "kind": "invoke-role",
+  "role": "product-owner",
+  "mode": "author-requests",
+  "action": {
+    "kind": "invoke-role",
+    "role": "product-owner",
+    "mode": "author-requests"
+  },
+  "produced": [
+    ".consort/agent-live.log",
+    ".consort/drive.pid",
+    ".consort/features/F1-stock-visibility/feature-request.md",
+    ".consort/run-config.json",
+    ".consort/sprints/v1/backlog.json",
+    ".consort/sprints/v1/requested.json"
+  ],
+  "deleted": [],
+  "snapshotted": false,
+  "transcript": {
+    "role": "product-owner",
+    "model": "opus",
+    "toolCount": 3,
+    "finalTextChars": 266
+  }
+}

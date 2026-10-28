@@ -1,0 +1,35 @@
+{
+  "ordinal": 37,
+  "step": 0,
+  "label": "spec-author",
+  "kind": "invoke-role",
+  "role": "spec-author",
+  "story": "S4-adjust-quantity-in-place",
+  "action": {
+    "kind": "invoke-role",
+    "role": "spec-author",
+    "story": "S4-adjust-quantity-in-place"
+  },
+  "produced": [
+    ".consort/agent-live.log",
+    ".consort/features/F1-stock-visibility/feature-spec.md",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/acs/AC1-adjust-updates-row-in-place.json",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/acs/AC1-adjust-updates-row-in-place.md",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/acs/AC2-adjust-below-zero-rejected.json",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/acs/AC2-adjust-below-zero-rejected.md",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/acs/AC3-missing-actor-named.json",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/acs/AC3-missing-actor-named.md",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/acs/AC4-adjustment-history-lookup.json",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/acs/AC4-adjustment-history-lookup.md",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/acs/AC5-audit-entries-immutable.json",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/acs/AC5-audit-entries-immutable.md"
+  ],
+  "deleted": [],
+  "snapshotted": false,
+  "transcript": {
+    "role": "spec-author",
+    "model": "opus",
+    "toolCount": 1,
+    "finalTextChars": 1214
+  }
+}

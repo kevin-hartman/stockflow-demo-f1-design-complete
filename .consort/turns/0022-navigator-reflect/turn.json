@@ -1,0 +1,28 @@
+{
+  "ordinal": 22,
+  "step": 0,
+  "label": "navigator-reflect",
+  "kind": "invoke-role",
+  "role": "navigator",
+  "mode": "reflect",
+  "story": "S2-find-by-tracking-code",
+  "action": {
+    "kind": "invoke-role",
+    "role": "navigator",
+    "story": "S2-find-by-tracking-code",
+    "buildMode": "reflect"
+  },
+  "produced": [
+    ".consort/agent-live.log",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/reflect-verdict.json",
+    ".consort/features/F1-stock-visibility/stories/S2-find-by-tracking-code/test-list-per-story.json"
+  ],
+  "deleted": [],
+  "snapshotted": false,
+  "transcript": {
+    "role": "navigator",
+    "model": "sonnet",
+    "toolCount": 2,
+    "finalTextChars": 696
+  }
+}

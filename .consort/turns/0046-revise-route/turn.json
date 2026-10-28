@@ -1,0 +1,28 @@
+{
+  "ordinal": 46,
+  "step": 0,
+  "label": "revise-route",
+  "kind": "revise-route",
+  "role": "test-strategist",
+  "story": "S4-adjust-quantity-in-place",
+  "action": {
+    "kind": "revise-route",
+    "story": "S4-adjust-quantity-in-place",
+    "role": "test-strategist",
+    "gate": "test_list",
+    "reason": "blocking smell \"reflect-testlist-defect\": reflection gate: AC2 'then' asserts UI outcomes (message naming quantity shown as field-error-quantity, row reverts to Q) but every AC2 test is API/DB-level (T78-T86, T115). No component or client test covers field-error-quantity or the stock-cell-quantity revert to Q after a rejected optimistic update (the NFR14 rejection clause; T86 only checks server state). Add a component test (AdjustRow.test.tsx) for the below-zero reject -> field-error-quantity + revert.",
+    "source": "smell:reflect-testlist-defect"
+  },
+  "produced": [
+    ".consort/features/F1-stock-visibility/.handback/test-strategist.S4-adjust-quantity-in-place.md",
+    ".consort/features/F1-stock-visibility/pipeline.json",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/test-list-patch.json",
+    ".consort/features/F1-stock-visibility/test-list.json",
+    ".consort/smells.json"
+  ],
+  "deleted": [
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/reflect-verdict.json",
+    ".consort/features/F1-stock-visibility/stories/S4-adjust-quantity-in-place/test-list-per-story.json"
+  ],
+  "snapshotted": false
+}
