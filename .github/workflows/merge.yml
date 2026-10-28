@@ -109,32 +109,13 @@ jobs:
           echo "lang=$LANG" >> $GITHUB_OUTPUT
           echo "Detected language: $LANG"
 
-      - name: Set up JDK (probe local)
-        id: jdk-probe
+      - name: Set up JDK
         if: steps.detect-lang.outputs.lang == 'java'
-        run: |
-          JH=""
-          if [ "$(uname)" = "Darwin" ]; then
-            JH="$(/usr/libexec/java_home 2>/dev/null || true)"
-          elif command -v java >/dev/null 2>&1 && java -version >/dev/null 2>&1; then
-            JH="$(dirname $(dirname $(readlink -f $(which java))))"
-          fi
-          if [ -n "$JH" ] && [ -x "$JH/bin/java" ]; then
-            echo "JAVA_HOME=$JH" >> $GITHUB_ENV
-            echo "local_jdk=found" >> $GITHUB_OUTPUT
-            echo "Using local JDK: $JH"
-            "$JH/bin/java" -version
-          else
-            echo "local_jdk=missing" >> $GITHUB_OUTPUT
-            echo "No local JDK; will fall back to actions/setup-java in the next step."
-          fi
-
-      - name: Set up JDK (download via actions/setup-java fallback)
-        if: steps.detect-lang.outputs.lang == 'java' && steps.jdk-probe.outputs.local_jdk == 'missing'
         uses: actions/setup-java@v4
         with:
-          java-version: '25'
+          java-version: '21'
           distribution: 'temurin'
+          cache: 'maven'
 
       - name: Set Java env vars
         if: steps.detect-lang.outputs.lang == 'java'
